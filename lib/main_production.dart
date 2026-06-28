@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'app.dart';
+import 'core/di/injection_container.dart';
+import 'core/utils/app_logger.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+const String _supabaseUrl = 'https://moto-orbito.supabase.co';
+const String _supabaseAnonKey = 'replace-with-production-anon-key';
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Moto Orbito Production')),
-        body: Center(child: Text('Moto Orbito Production')),
-      ),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  AppLogger.init(enabled: false);
+  await initDependencies(
+    supabaseUrl: _supabaseUrl,
+    supabaseAnonKey: _supabaseAnonKey,
+  );
+  runApp(const MotoOrbitoApp());
 }
