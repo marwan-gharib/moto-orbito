@@ -1,0 +1,6 @@
+base_locale: ar
+fallback_strategy: none
+input_directory: assets/i18n
+input_file_pattern: .json
+output_directory: lib/core/i18n
+flutter_integration: false
