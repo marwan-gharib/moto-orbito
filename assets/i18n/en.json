@@ -1,0 +1,29 @@
+{
+  "common": {
+    "appName": "Moto Orbito",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "loading": "Loading",
+    "dashboard": "Dashboard",
+    "groups": "Groups",
+    "liveMap": "Live Map",
+    "maintenance": "Maintenance",
+    "profile": "Profile",
+    "noConnectionTitle": "No connection",
+    "noConnectionMessage": "The service could not be reached. Check your network and try again.",
+    "emptyTitle": "No data yet",
+    "emptyMessage": "Items will appear here when they are available."
+  },
+  "errors": {
+    "network": "Could not connect to the network. Try again.",
+    "server": "A server error occurred. Try again later.",
+    "auth": "Your session expired or you are not authorized.",
+    "notFound": "The requested item was not found.",
+    "permission": "You do not have the required permission.",
+    "storage": "The requested file could not be processed.",
+    "unexpected": "An unexpected error occurred.",
+    "fieldRequired": "This field is required."
+  }
+}
