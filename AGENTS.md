@@ -1,12 +1,7 @@
 # AGENT.md — Moto Orbito
 <!-- SPECKIT START -->
-Active feature: **Phase 0 — Project Foundation & Core Infrastructure** (`001-core-infrastructure`)
-Read the current plan for implementation context, design decisions, file structure, and service contracts:
-- Plan: `specs/001-core-infrastructure/plan.md`
-- Research: `specs/001-core-infrastructure/research.md`
-- Data Model: `specs/001-core-infrastructure/data-model.md`
-- Contracts: `specs/001-core-infrastructure/contracts/`
-- Quickstart: `specs/001-core-infrastructure/quickstart.md`
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
 <!-- SPECKIT END -->
 
 > **Read this file completely before writing a single line of code.**
