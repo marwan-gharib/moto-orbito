@@ -10,11 +10,10 @@ final class AppConstants {
   static const int inviteCodeLength = 6;
 
   // ── GPS Tracking ───────────────────────────────────────────────────────────
-  /// How often (in seconds) location is pushed to Supabase Realtime.
   static const int locationUpdateIntervalSeconds = 3;
 
   // ── Pagination ─────────────────────────────────────────────────────────────
-  static const int pageSize = 20;
+  static const int paginationPageSize = 20;
 
   // ── Search ─────────────────────────────────────────────────────────────────
   static const int searchDebounceMsec = 400;
@@ -25,4 +24,10 @@ final class AppConstants {
   // ── AI ─────────────────────────────────────────────────────────────────────
   static const int aiMaxRetries = 2;
   static const int aiTimeoutSeconds = 30;
+
+  // ── Locale ─────────────────────────────────────────────────────────────────
+  static const String defaultLocale = 'ar';
+
+  // ── UI Labels ──────────────────────────────────────────────────────────────
+  static const String otpCodeLabel = 'OTP Code';
 }

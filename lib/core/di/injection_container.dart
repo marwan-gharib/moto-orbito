@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../features/auth/di/auth_module.dart';
+import '../../features/onboarding/di/onboarding_module.dart';
 import '../utils/app_logger.dart';
 import 'core_module.dart';
 
@@ -43,4 +45,6 @@ Future<void> initDependencies({
   }
 
   registerCoreModule(baseUrl: supabaseUrl);
+  registerAuthModule();
+  registerOnboardingModule();
 }

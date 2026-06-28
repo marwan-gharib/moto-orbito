@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/network/dio_client.dart';
+import 'package:moto_orbito/features/auth/presentation/cubit/auth_cubit.dart';
 
 import '../network/base_api_client.dart';
 import '../router/app_router.dart';
@@ -53,7 +54,7 @@ void registerCoreModule({required String baseUrl}) {
   }
   if (!sl.isRegistered<AppRouter>()) {
     sl.registerLazySingleton<AppRouter>(
-      () => AppRouter(sl(), sl(), () => supabaseInitialized),
+      () => AppRouter(sl<AuthCubit>(), sl(), () => supabaseInitialized),
     );
   }
   if (!sl.isRegistered<GoRouter>()) {

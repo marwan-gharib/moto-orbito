@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import '../../constants/app_constants.dart';
-import '../../constants/endpoints.dart';
+import '../../constants/app_links.dart';
 import '../../error/api_result.dart';
 import '../../error/failure.dart';
 import '../../network/base_api_client.dart';
@@ -24,7 +24,7 @@ final class AiService {
       try {
         final result = await _apiClient
             .post<Map<String, dynamic>>(
-              Endpoints.aiProxy,
+              AppLinks.aiProxy,
               body: {
                 'prompt_key': promptKey,
                 'input': input,

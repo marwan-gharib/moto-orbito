@@ -1,0 +1,68 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:moto_orbito/core/error/api_result.dart';
+import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
+import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/use_cases/sign_up.dart';
+
+class MockAuthRepository extends Mock implements AuthRepository {}
+
+void main() {
+  late AuthRepository repository;
+  late SignUp useCase;
+
+  setUp(() {
+    repository = MockAuthRepository();
+    useCase = SignUp(repository);
+  });
+
+  final params = SignUpParams(
+    email: 'test@test.com',
+    password: 'password123',
+    fullName: 'Test User',
+    phone: '+971501234567',
+  );
+
+  final testUser = UserEntity(
+    id: 'uid-1',
+    email: 'test@test.com',
+    fullName: 'Test User',
+    createdAt: DateTime(2026),
+  );
+
+  test('signs up successfully', () async {
+    when(() => repository.signUpWithEmailPassword(params)).thenAnswer(
+      (_) async => Success(testUser),
+    );
+
+    final result = await useCase(params);
+
+    expect(result, isA<Success<UserEntity>>());
+  });
+
+  test('returns failure when email already registered', () async {
+    when(() => repository.signUpWithEmailPassword(params)).thenAnswer(
+      (_) async => const Failure(
+        AuthFailure(messageKey: 'auth.emailAlreadyExists'),
+      ),
+    );
+
+    final result = await useCase(params);
+
+    expect(result, isA<Failure<UserEntity>>());
+    expect((result as Failure<UserEntity>).failure.messageKey,
+        'auth.emailAlreadyExists');
+  });
+
+  test('returns failure on network error', () async {
+    when(() => repository.signUpWithEmailPassword(params)).thenAnswer(
+      (_) async => const Failure(NetworkFailure()),
+    );
+
+    final result = await useCase(params);
+
+    expect(result, isA<Failure<UserEntity>>());
+    expect((result as Failure<UserEntity>).failure, isA<NetworkFailure>());
+  });
+}

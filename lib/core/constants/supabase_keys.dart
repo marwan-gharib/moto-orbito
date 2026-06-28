@@ -1,4 +1,5 @@
-/// Supabase table names and column identifiers.
+/// Supabase-specific constants: table names, column identifiers, storage buckets,
+/// realtime events, and auth metadata keys.
 /// Never store credentials here — those live in the flavor entry points.
 final class SupabaseKeys {
   const SupabaseKeys._();
@@ -29,12 +30,20 @@ final class SupabaseKeys {
   static const String createdAt = 'created_at';
   static const String updatedAt = 'updated_at';
 
-  // ── users columns ──────────────────────────────────────────────────────────
+  // ── users Columns ──────────────────────────────────────────────────────────
   static const String fcmToken = 'fcm_token';
   static const String speedLimitKmh = 'speed_limit_kmh';
   static const String isPrimary = 'is_primary';
+  static const String fullName = 'full_name';
+  static const String phone = 'phone';
+  static const String emailConfirmedAt = 'email_confirmed_at';
+  static const String phoneVerifiedAt = 'phone_verified_at';
+  static const String name = 'name';
+  static const String email = 'email';
+  static const String password = 'password';
+  static const String locale = 'locale';
 
-  // ── rides columns ──────────────────────────────────────────────────────────
+  // ── rides Columns ──────────────────────────────────────────────────────────
   static const String rideId = 'ride_id';
   static const String riderId = 'rider_id';
   static const String lat = 'lat';
@@ -42,17 +51,17 @@ final class SupabaseKeys {
   static const String speedKmh = 'speed_kmh';
   static const String timestamp = 'timestamp';
 
-  // ── Realtime ──────────────────────────────────────────────────────────────────
+  // ── Realtime ───────────────────────────────────────────────────────────────
   static const String realtimeLocationEvent = 'location';
 
-  // ── groups columns ─────────────────────────────────────────────────────
+  // ── groups Columns ─────────────────────────────────────────────────────────
   static const String groupId = 'group_id';
   static const String inviteCode = 'invite_code';
 
-  // ── motorcycles columns ─────────────────────────────────────────────
+  // ── motorcycles Columns ────────────────────────────────────────────────────
   static const String motorcycleId = 'motorcycle_id';
 
-  // ── Secure Storage keys ────────────────────────────────────────────────────
+  // ── Secure Storage Keys ────────────────────────────────────────────────────
   static const String pendingFcmToken = 'pending_fcm_token';
   static const String jwtToken = 'jwt';
 }

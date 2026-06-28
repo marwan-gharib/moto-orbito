@@ -15,7 +15,7 @@ final class ServerFailure extends AppFailure {
 }
 
 final class AuthFailure extends AppFailure {
-  const AuthFailure() : super('errors.auth');
+  const AuthFailure({String? messageKey}) : super(messageKey ?? 'errors.auth');
 }
 
 final class NotFoundFailure extends AppFailure {

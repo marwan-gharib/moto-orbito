@@ -38,6 +38,8 @@ class TranslationsEn with BaseTranslations<AppLocale, Translations> implements T
 	// Translations
 	@override late final _Translations$common$en common = _Translations$common$en._(_root);
 	@override late final _Translations$errors$en errors = _Translations$errors$en._(_root);
+	@override late final _Translations$auth$en auth = _Translations$auth$en._(_root);
+	@override late final _Translations$onboarding$en onboarding = _Translations$onboarding$en._(_root);
 }
 
 // Path: common
@@ -81,6 +83,191 @@ class _Translations$errors$en implements Translations$errors$ar {
 	@override String get fieldRequired => 'This field is required.';
 }
 
+// Path: auth
+class _Translations$auth$en implements Translations$auth$ar {
+	_Translations$auth$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get emailAlreadyExists => 'Email is already registered.';
+	@override String get emailNotVerified => 'Please verify your email first.';
+	@override String get invalidCredentials => 'Invalid login credentials.';
+	@override String get invalidOtp => 'Invalid verification code.';
+	@override String get otpExpired => 'Verification code has expired.';
+	@override late final _Translations$auth$deleteAccount$en deleteAccount = _Translations$auth$deleteAccount$en._(_root);
+	@override late final _Translations$auth$signUp$en signUp = _Translations$auth$signUp$en._(_root);
+	@override late final _Translations$auth$login$en login = _Translations$auth$login$en._(_root);
+	@override late final _Translations$auth$verifyEmail$en verifyEmail = _Translations$auth$verifyEmail$en._(_root);
+	@override late final _Translations$auth$verifyPhone$en verifyPhone = _Translations$auth$verifyPhone$en._(_root);
+	@override late final _Translations$auth$welcome$en welcome = _Translations$auth$welcome$en._(_root);
+	@override late final _Translations$auth$forgotPassword$en forgotPassword = _Translations$auth$forgotPassword$en._(_root);
+	@override late final _Translations$auth$socialLogin$en socialLogin = _Translations$auth$socialLogin$en._(_root);
+}
+
+// Path: onboarding
+class _Translations$onboarding$en implements Translations$onboarding$ar {
+	_Translations$onboarding$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Translations$onboarding$slide1$en slide1 = _Translations$onboarding$slide1$en._(_root);
+	@override late final _Translations$onboarding$slide2$en slide2 = _Translations$onboarding$slide2$en._(_root);
+	@override late final _Translations$onboarding$slide3$en slide3 = _Translations$onboarding$slide3$en._(_root);
+	@override String get skip => 'Skip';
+	@override String get next => 'Next';
+	@override String get getStarted => 'Get Started';
+}
+
+// Path: auth.deleteAccount
+class _Translations$auth$deleteAccount$en implements Translations$auth$deleteAccount$ar {
+	_Translations$auth$deleteAccount$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get confirmPhrase => 'DELETE';
+	@override String get title => 'Delete Account';
+	@override String get warning => 'This action is irreversible. All your data will be permanently deleted.';
+	@override String get typeToConfirm => 'Type DELETE to confirm:';
+	@override String get deleteButton => 'Delete';
+	@override String get cancel => 'Cancel';
+}
+
+// Path: auth.signUp
+class _Translations$auth$signUp$en implements Translations$auth$signUp$ar {
+	_Translations$auth$signUp$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Create Account';
+	@override String get fullName => 'Full Name';
+	@override String get email => 'Email';
+	@override String get password => 'Password';
+	@override String get phone => 'Phone';
+	@override String get submit => 'Create Account';
+	@override String get success => 'Account created successfully';
+}
+
+// Path: auth.login
+class _Translations$auth$login$en implements Translations$auth$login$ar {
+	_Translations$auth$login$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Log In';
+	@override String get email => 'Email';
+	@override String get password => 'Password';
+	@override String get submit => 'Log In';
+	@override String get forgotPassword => 'Forgot Password?';
+}
+
+// Path: auth.verifyEmail
+class _Translations$auth$verifyEmail$en implements Translations$auth$verifyEmail$ar {
+	_Translations$auth$verifyEmail$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Verify Email';
+	@override String get description => 'Enter the code sent to your email';
+	@override String get otpLabel => 'Verification Code';
+	@override String get verify => 'Verify';
+	@override String get resend => 'Resend Code';
+	@override String get noResendsLeft => 'No resends left';
+	@override String get maxAttemptsReached => 'Maximum resend attempts reached.';
+}
+
+// Path: auth.verifyPhone
+class _Translations$auth$verifyPhone$en implements Translations$auth$verifyPhone$ar {
+	_Translations$auth$verifyPhone$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Verify Phone';
+	@override String get description => 'Enter the code sent to your phone';
+	@override String get skip => 'Skip for Now';
+	@override String get verify => 'Verify';
+}
+
+// Path: auth.welcome
+class _Translations$auth$welcome$en implements Translations$auth$welcome$ar {
+	_Translations$auth$welcome$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Welcome to Moto Orbito';
+	@override String get subtitle => 'Ride Together, Stay in Orbit';
+	@override String get google => 'Continue with Google';
+	@override String get facebook => 'Continue with Facebook';
+	@override String get or => 'or';
+	@override String get signUp => 'Sign Up';
+	@override String get logIn => 'Log In';
+}
+
+// Path: auth.forgotPassword
+class _Translations$auth$forgotPassword$en implements Translations$auth$forgotPassword$ar {
+	_Translations$auth$forgotPassword$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Reset Password';
+	@override String get description => 'Enter your email to receive a password reset link.';
+	@override String get email => 'Email';
+	@override String get send => 'Send Reset Link';
+	@override String get success => 'Check your email for the reset link.';
+}
+
+// Path: auth.socialLogin
+class _Translations$auth$socialLogin$en implements Translations$auth$socialLogin$ar {
+	_Translations$auth$socialLogin$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get googleError => 'Google sign-in failed. Please try again.';
+	@override String get facebookError => 'Facebook sign-in failed. Please try again.';
+}
+
+// Path: onboarding.slide1
+class _Translations$onboarding$slide1$en implements Translations$onboarding$slide1$ar {
+	_Translations$onboarding$slide1$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Ride Together';
+	@override String get description => 'Connect with fellow riders and explore new routes together.';
+}
+
+// Path: onboarding.slide2
+class _Translations$onboarding$slide2$en implements Translations$onboarding$slide2$ar {
+	_Translations$onboarding$slide2$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Stay in Orbit';
+	@override String get description => 'Track your rides, monitor performance, and stay connected.';
+}
+
+// Path: onboarding.slide3
+class _Translations$onboarding$slide3$en implements Translations$onboarding$slide3$ar {
+	_Translations$onboarding$slide3$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Ride Smarter';
+	@override String get description => 'Get AI-powered insights and maintenance reminders.';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -112,6 +299,63 @@ extension on TranslationsEn {
 			'errors.storage' => 'The requested file could not be processed.',
 			'errors.unexpected' => 'An unexpected error occurred.',
 			'errors.fieldRequired' => 'This field is required.',
+			'auth.emailAlreadyExists' => 'Email is already registered.',
+			'auth.emailNotVerified' => 'Please verify your email first.',
+			'auth.invalidCredentials' => 'Invalid login credentials.',
+			'auth.invalidOtp' => 'Invalid verification code.',
+			'auth.otpExpired' => 'Verification code has expired.',
+			'auth.deleteAccount.confirmPhrase' => 'DELETE',
+			'auth.deleteAccount.title' => 'Delete Account',
+			'auth.deleteAccount.warning' => 'This action is irreversible. All your data will be permanently deleted.',
+			'auth.deleteAccount.typeToConfirm' => 'Type DELETE to confirm:',
+			'auth.deleteAccount.deleteButton' => 'Delete',
+			'auth.deleteAccount.cancel' => 'Cancel',
+			'auth.signUp.title' => 'Create Account',
+			'auth.signUp.fullName' => 'Full Name',
+			'auth.signUp.email' => 'Email',
+			'auth.signUp.password' => 'Password',
+			'auth.signUp.phone' => 'Phone',
+			'auth.signUp.submit' => 'Create Account',
+			'auth.signUp.success' => 'Account created successfully',
+			'auth.login.title' => 'Log In',
+			'auth.login.email' => 'Email',
+			'auth.login.password' => 'Password',
+			'auth.login.submit' => 'Log In',
+			'auth.login.forgotPassword' => 'Forgot Password?',
+			'auth.verifyEmail.title' => 'Verify Email',
+			'auth.verifyEmail.description' => 'Enter the code sent to your email',
+			'auth.verifyEmail.otpLabel' => 'Verification Code',
+			'auth.verifyEmail.verify' => 'Verify',
+			'auth.verifyEmail.resend' => 'Resend Code',
+			'auth.verifyEmail.noResendsLeft' => 'No resends left',
+			'auth.verifyEmail.maxAttemptsReached' => 'Maximum resend attempts reached.',
+			'auth.verifyPhone.title' => 'Verify Phone',
+			'auth.verifyPhone.description' => 'Enter the code sent to your phone',
+			'auth.verifyPhone.skip' => 'Skip for Now',
+			'auth.verifyPhone.verify' => 'Verify',
+			'auth.welcome.title' => 'Welcome to Moto Orbito',
+			'auth.welcome.subtitle' => 'Ride Together, Stay in Orbit',
+			'auth.welcome.google' => 'Continue with Google',
+			'auth.welcome.facebook' => 'Continue with Facebook',
+			'auth.welcome.or' => 'or',
+			'auth.welcome.signUp' => 'Sign Up',
+			'auth.welcome.logIn' => 'Log In',
+			'auth.forgotPassword.title' => 'Reset Password',
+			'auth.forgotPassword.description' => 'Enter your email to receive a password reset link.',
+			'auth.forgotPassword.email' => 'Email',
+			'auth.forgotPassword.send' => 'Send Reset Link',
+			'auth.forgotPassword.success' => 'Check your email for the reset link.',
+			'auth.socialLogin.googleError' => 'Google sign-in failed. Please try again.',
+			'auth.socialLogin.facebookError' => 'Facebook sign-in failed. Please try again.',
+			'onboarding.slide1.title' => 'Ride Together',
+			'onboarding.slide1.description' => 'Connect with fellow riders and explore new routes together.',
+			'onboarding.slide2.title' => 'Stay in Orbit',
+			'onboarding.slide2.description' => 'Track your rides, monitor performance, and stay connected.',
+			'onboarding.slide3.title' => 'Ride Smarter',
+			'onboarding.slide3.description' => 'Get AI-powered insights and maintenance reminders.',
+			'onboarding.skip' => 'Skip',
+			'onboarding.next' => 'Next',
+			'onboarding.getStarted' => 'Get Started',
 			_ => null,
 		};
 	}
