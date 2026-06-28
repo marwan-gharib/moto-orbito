@@ -1,26 +1,19 @@
 import 'dart:async';
 
+import '../../constants/app_constants.dart';
+import '../../constants/endpoints.dart';
 import '../../error/api_result.dart';
 import '../../error/failure.dart';
 import '../../network/base_api_client.dart';
 
-abstract interface class AiService {
-  Future<ApiResult<Map<String, dynamic>>> invoke({
-    required String promptKey,
-    required Map<String, dynamic> input,
-    required String languageCode,
-  });
-}
+final class AiService {
+  AiService(this._apiClient);
 
-final class AiServiceImpl implements AiService {
-  AiServiceImpl(this._apiClient);
-
-  static const int _maxRetries = 2;
-  static const Duration _timeout = Duration(seconds: 30);
+  static const int _maxRetries = AppConstants.aiMaxRetries;
+  static const Duration _timeout = Duration(seconds: AppConstants.aiTimeoutSeconds);
 
   final BaseApiClient _apiClient;
 
-  @override
   Future<ApiResult<Map<String, dynamic>>> invoke({
     required String promptKey,
     required Map<String, dynamic> input,
@@ -31,7 +24,7 @@ final class AiServiceImpl implements AiService {
       try {
         final result = await _apiClient
             .post<Map<String, dynamic>>(
-              '/functions/v1/ai-proxy',
+              Endpoints.aiProxy,
               body: {
                 'prompt_key': promptKey,
                 'input': input,
@@ -58,3 +51,4 @@ final class AiServiceImpl implements AiService {
     return const Failure(ServerFailure());
   }
 }
+

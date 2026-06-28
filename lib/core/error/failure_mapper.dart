@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 
 import 'failure.dart';
 
-abstract final class FailureMapper {
+final class FailureMapper {
+  const FailureMapper._();
+
   static AppFailure fromDioException(DioException exception) {
     final statusCode = exception.response?.statusCode;
     if (statusCode == 401) return const AuthFailure();

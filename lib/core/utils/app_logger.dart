@@ -1,6 +1,8 @@
 import 'dart:developer' as developer;
 
-abstract final class AppLogger {
+final class AppLogger {
+  const AppLogger._();
+
   static bool _enabled = false;
 
   static const List<String> _sensitiveMarkers = [

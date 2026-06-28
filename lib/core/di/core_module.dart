@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moto_orbito/core/network/dio_client.dart';
 
 import '../network/base_api_client.dart';
 import '../router/app_router.dart';
@@ -30,20 +31,20 @@ void registerCoreModule({required String baseUrl}) {
   }
   if (!sl.isRegistered<BaseApiClient>()) {
     sl.registerLazySingleton<BaseApiClient>(
-      () => DioBaseApiClient(sl(), sl(), storage: sl()),
+      () => DioClient(sl(), sl(), storage: sl()),
     );
   }
   if (!sl.isRegistered<SupabaseService>()) {
-    sl.registerLazySingleton<SupabaseService>(SupabaseServiceImpl.new);
+    sl.registerLazySingleton<SupabaseService>(SupabaseService.new);
   }
   if (!sl.isRegistered<RealtimeService>()) {
-    sl.registerLazySingleton<RealtimeService>(() => RealtimeServiceImpl(sl()));
+    sl.registerLazySingleton<RealtimeService>(() => RealtimeService(sl()));
   }
   if (!sl.isRegistered<StorageService>()) {
-    sl.registerLazySingleton<StorageService>(() => StorageServiceImpl(sl()));
+    sl.registerLazySingleton<StorageService>(() => StorageService(sl()));
   }
   if (!sl.isRegistered<AiService>()) {
-    sl.registerLazySingleton<AiService>(() => AiServiceImpl(sl()));
+    sl.registerLazySingleton<AiService>(() => AiService(sl()));
   }
   if (!sl.isRegistered<DeepLinkIntentStore>()) {
     sl.registerLazySingleton<DeepLinkIntentStore>(
@@ -70,7 +71,7 @@ void registerCoreModule({required String baseUrl}) {
   }
   if (!sl.isRegistered<FcmService>()) {
     sl.registerLazySingleton<FcmService>(
-      () => FcmServiceImpl(
+      () => FcmService(
         sl(),
         sl(),
         sl(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'app.dart';
 import 'core/di/injection_container.dart';
@@ -10,6 +11,7 @@ const String _supabaseAnonKey = 'replace-with-production-anon-key';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLogger.init(enabled: false);
+  await ScreenUtil.ensureScreenSize();
   await initDependencies(
     supabaseUrl: _supabaseUrl,
     supabaseAnonKey: _supabaseAnonKey,

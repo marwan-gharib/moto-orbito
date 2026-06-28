@@ -20,7 +20,7 @@ final class NoInternetScreen extends StatelessWidget {
             children: [
               Icon(
                 Icons.wifi_off_outlined,
-                color: context.colors.primary,
+                color: context.colorScheme.primary,
                 size: Spacing.xxl,
               ),
               const SizedBox(height: Spacing.lg),

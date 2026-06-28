@@ -12,11 +12,11 @@ final class MotoOrbitoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LocaleSettings.setLocaleSync(AppLocale.ar);
+    LocaleSettings.setLocaleSync(AppLocale.en);
 
     return MaterialApp.router(
       routerConfig: GetIt.instance<GoRouter>(),
-      locale: const Locale('ar'),
+      locale: const Locale('en'),
       supportedLocales: const [Locale('ar'), Locale('en')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       theme: AppTheme.light(),

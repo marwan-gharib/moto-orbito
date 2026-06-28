@@ -2,6 +2,18 @@ import 'failure.dart';
 
 sealed class ApiResult<T> {
   const ApiResult();
+
+  R fold<R>({
+    required R Function(AppFailure) onFailure,
+    required R Function(T) onSuccess,
+  }) {
+    switch (this) {
+      case Success(data: final data):
+        return onSuccess(data);
+      case Failure(failure: final failure):
+        return onFailure(failure);
+    }
+  }
 }
 
 final class Success<T> extends ApiResult<T> {

@@ -2,45 +2,36 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../i18n/strings.g.dart';
+import '../../constants/fcm_keys.dart';
+import '../../constants/supabase_keys.dart';
 import '../../router/routes.dart';
 import '../../utils/app_logger.dart';
 
-abstract interface class FcmService {
-  Future<void> initialize();
 
-  Future<String?> getPendingToken();
-
-  Future<void> clearPendingToken();
-}
-
-final class FcmServiceImpl implements FcmService {
-  FcmServiceImpl(
+final class FcmService {
+  FcmService(
     this._messaging,
     this._localNotifications,
     this._storage,
     this._onNavigate,
   );
 
-  static const String _pendingTokenKey = 'fcm_token_pending';
-
   final FirebaseMessaging _messaging;
   final FlutterLocalNotificationsPlugin _localNotifications;
   final FlutterSecureStorage _storage;
   final void Function(String location) _onNavigate;
 
-  @override
   Future<void> initialize() async {
     await _messaging.requestPermission();
     await _initializeLocalNotifications();
 
     final token = await _messaging.getToken();
     if (token != null) {
-      await _storage.write(key: _pendingTokenKey, value: token);
+      await _storage.write(key: SupabaseKeys.pendingFcmToken, value: token);
     }
 
     _messaging.onTokenRefresh.listen((token) {
-      _storage.write(key: _pendingTokenKey, value: token);
+      _storage.write(key: SupabaseKeys.pendingFcmToken, value: token);
     });
 
     FirebaseMessaging.onMessage.listen(_showForegroundNotification);
@@ -52,11 +43,11 @@ final class FcmServiceImpl implements FcmService {
     }
   }
 
-  @override
-  Future<String?> getPendingToken() => _storage.read(key: _pendingTokenKey);
+  Future<String?> getPendingToken() =>
+      _storage.read(key: SupabaseKeys.pendingFcmToken);
 
-  @override
-  Future<void> clearPendingToken() => _storage.delete(key: _pendingTokenKey);
+  Future<void> clearPendingToken() =>
+      _storage.delete(key: SupabaseKeys.pendingFcmToken);
 
   Future<void> _initializeLocalNotifications() {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -70,8 +61,8 @@ final class FcmServiceImpl implements FcmService {
     if (notification == null) return;
 
     final androidDetails = AndroidNotificationDetails(
-      'moto_orbito_default',
-      t.common.appName,
+      FcmKeys.channelId,
+      FcmKeys.channelName,
       importance: Importance.high,
       priority: Priority.high,
     );
@@ -102,12 +93,12 @@ final class NotificationPayload {
 
   factory NotificationPayload.fromMap(Map<String, dynamic> map) {
     return NotificationPayload(
-      type: map['type'] as String?,
+      type: map[FcmKeys.type] as String?,
       targetId:
-          (map['target_id'] ??
-                  map['ride_id'] ??
-                  map['group_id'] ??
-                  map['motorcycle_id'])
+          (map[FcmKeys.targetId] ??
+                  map[SupabaseKeys.rideId] ??
+                  map[SupabaseKeys.groupId] ??
+                  map[SupabaseKeys.motorcycleId])
               as String?,
     );
   }
@@ -117,16 +108,19 @@ final class NotificationPayload {
 
   String? toLocation() {
     return switch (type) {
-      'ride_started' ||
-      'speed_alert' ||
-      'geofence_alert' when targetId != null => '/live-map/$targetId',
-      'maintenance_due' when targetId != null => '/maintenance/$targetId',
-      'insurance_expiry' ||
-      'registration_expiry' when targetId != null => '/motorcycles/$targetId',
-      'group_member_joined' when targetId != null =>
+      FcmKeys.rideStarted ||
+      FcmKeys.speedAlert ||
+      FcmKeys.geofenceAlert when targetId != null => '/live-map/$targetId',
+      FcmKeys.maintenanceDue when targetId != null =>
+        '/maintenance/$targetId',
+      FcmKeys.insuranceExpiry ||
+      FcmKeys.registrationExpiry when targetId != null =>
+        '/motorcycles/$targetId',
+      FcmKeys.groupMemberJoined when targetId != null =>
         '/groups/$targetId/members',
-      'weekly_report_ready' => AppRoute.aiWeekly,
+      FcmKeys.weeklyReportReady => AppRoute.aiWeekly,
       _ => null,
     };
   }
 }
+

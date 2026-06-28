@@ -28,7 +28,7 @@ final class EmptyStateWidget extends StatelessWidget {
           children: [
             Icon(
               Icons.inbox_outlined,
-              color: context.colors.primary,
+              color: context.colorScheme.primary,
               size: Spacing.xxl,
             ),
             const SizedBox(height: Spacing.md),

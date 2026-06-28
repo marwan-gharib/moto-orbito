@@ -24,7 +24,7 @@ final class ErrorStateWidget extends StatelessWidget {
           children: [
             Icon(
               Icons.error_outline,
-              color: context.colors.error,
+              color: context.colorScheme.error,
               size: Spacing.xxl,
             ),
             const SizedBox(height: Spacing.md),

@@ -1,37 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:moto_orbito/core/theme/app_text_styles.dart';
 
+import 'app_colors.dart';
 import 'app_colors_extension.dart';
-import 'app_text_styles.dart';
 
-abstract final class AppTheme {
+final class AppTheme {
+  const AppTheme._();
+
   static ThemeData light() {
-    final colors = AppColorsExtension.light();
-    return _theme(Brightness.light, colors);
+    return _theme(
+      brightness: Brightness.light,
+      colorsExtension: AppColorsExtension.light(),
+      colorScheme: const ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.primaryLight,
+        onPrimary: AppColors.onPrimaryLight,
+        secondary: AppColors.primaryVariantLight,
+        onSecondary: AppColors.onPrimaryLight,
+        error: AppColors.errorLight,
+        onError: AppColors.onErrorLight,
+        surface: AppColors.surfaceLight,
+        onSurface: AppColors.onSurfaceLight,
+      ),
+      scaffoldBackgroundColor: AppColors.backgroundLight,
+      dividerColor: AppColors.dividerLight,
+    );
   }
 
   static ThemeData dark() {
-    final colors = AppColorsExtension.dark();
-    return _theme(Brightness.dark, colors);
+    return _theme(
+      brightness: Brightness.dark,
+      colorsExtension: AppColorsExtension.dark(),
+      colorScheme: const ColorScheme(
+        brightness: Brightness.dark,
+        primary: AppColors.primaryDark,
+        onPrimary: AppColors.onPrimaryDark,
+        secondary: AppColors.primaryVariantDark,
+        onSecondary: AppColors.onPrimaryDark,
+        error: AppColors.errorDark,
+        onError: AppColors.onErrorDark,
+        surface: AppColors.surfaceDark,
+        onSurface: AppColors.onSurfaceDark,
+      ),
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      dividerColor: AppColors.dividerDark,
+    );
   }
 
-  static ThemeData _theme(Brightness brightness, AppColorsExtension colors) {
+  static ThemeData _theme({
+    required Brightness brightness,
+    required AppColorsExtension colorsExtension,
+    required ColorScheme colorScheme,
+    required Color scaffoldBackgroundColor,
+    required Color dividerColor,
+  }) {
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
-      scaffoldBackgroundColor: colors.background,
-      colorScheme: ColorScheme(
-        brightness: brightness,
-        primary: colors.primary,
-        onPrimary: colors.onPrimary,
-        secondary: colors.primaryVariant,
-        onSecondary: colors.onPrimary,
-        error: colors.error,
-        onError: colors.onError,
-        surface: colors.surface,
-        onSurface: colors.onSurface,
-      ),
-      textTheme: buildAppTextTheme(colors.onSurface),
-      extensions: <ThemeExtension<dynamic>>[colors],
+      scaffoldBackgroundColor: scaffoldBackgroundColor,
+      colorScheme: colorScheme,
+      dividerColor: dividerColor,
+      textTheme: AppTextStyles.build(colorScheme.onSurface),
+      extensions: <ThemeExtension<dynamic>>[colorsExtension],
     );
   }
 }

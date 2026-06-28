@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moto_orbito/core/utils/enums.dart';
 
 import '../extensions/context_extensions.dart';
 import '../theme/spacing.dart';
-
-enum AppButtonVariant { primary, secondary }
 
 final class AppButton extends StatelessWidget {
   const AppButton({
@@ -23,10 +22,11 @@ final class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final colors = context.colorScheme;
     final isPrimary = variant == AppButtonVariant.primary;
     final background = isPrimary ? colors.primary : colors.surface;
     final foreground = isPrimary ? colors.onPrimary : colors.primary;
+    final divider = Theme.of(context).dividerColor;
 
     return SizedBox(
       width: double.infinity,
@@ -34,7 +34,7 @@ final class AppButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: background,
           foregroundColor: foreground,
-          disabledBackgroundColor: colors.divider,
+          disabledBackgroundColor: divider,
           disabledForegroundColor: colors.onSurface,
           padding: const EdgeInsets.symmetric(
             horizontal: Spacing.md,

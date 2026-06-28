@@ -14,20 +14,9 @@ void main() {
           home: Builder(
             builder: (context) {
               final colors = Theme.of(context).extension<AppColorsExtension>();
-              expect(colors, isNotNull);
-              expect(colors!.primary, isNotNull);
-              expect(colors.primaryVariant, isNotNull);
-              expect(colors.onPrimary, isNotNull);
-              expect(colors.surface, isNotNull);
-              expect(colors.onSurface, isNotNull);
-              expect(colors.background, isNotNull);
-              expect(colors.onBackground, isNotNull);
-              expect(colors.error, isNotNull);
-              expect(colors.onError, isNotNull);
-              expect(colors.success, isNotNull);
-              expect(colors.warning, isNotNull);
-              expect(colors.divider, isNotNull);
-              expect(colors.skeleton, isNotNull);
+              expect(colors?.success, isNotNull);
+              expect(colors?.warning, isNotNull);
+              expect(colors?.skeleton, isNotNull);
               return const SizedBox.shrink();
             },
           ),

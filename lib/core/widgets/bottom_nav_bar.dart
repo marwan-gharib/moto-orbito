@@ -13,7 +13,7 @@ final class BottomNavBar extends StatelessWidget {
     final translations = context.t.common;
     return NavigationBar(
       selectedIndex: navigationShell.currentIndex,
-      indicatorColor: context.colors.primary.withValues(alpha: 0.16),
+      indicatorColor: context.colorScheme.primary.withValues(alpha: 0.16),
       onDestinationSelected: (index) => navigationShell.goBranch(
         index,
         initialLocation: index == navigationShell.currentIndex,

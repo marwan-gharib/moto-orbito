@@ -8,6 +8,8 @@ extension MotoBuildContext on BuildContext {
     return Theme.of(this).extension<AppColorsExtension>()!;
   }
 
+  ColorScheme get colorScheme => Theme.of(this).colorScheme;
+
   TextTheme get textTheme => Theme.of(this).textTheme;
 
   Translations get t => LocaleSettings.instance.currentTranslations;

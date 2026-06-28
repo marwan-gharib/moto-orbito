@@ -15,7 +15,7 @@ Future<void> initDependencies({
 }) async {
   try {
     await Firebase.initializeApp();
-  } on Object catch (error, stackTrace) {
+  } catch (error, stackTrace) {
     AppLogger.warning('Firebase initialization failed');
     AppLogger.error(
       'Firebase initialization error',
@@ -32,7 +32,7 @@ Future<void> initDependencies({
       );
       supabaseInitialized = true;
     }
-  } on Object catch (error, stackTrace) {
+  } catch (error, stackTrace) {
     supabaseInitialized = false;
     AppLogger.warning('Supabase initialization failed');
     AppLogger.error(
