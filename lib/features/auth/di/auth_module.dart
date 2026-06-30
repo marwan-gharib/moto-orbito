@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../../core/network/base_api_client.dart';
+import '../../../core/services/supabase/storage_service.dart';
 import '../../../core/services/supabase/supabase_service.dart';
 import '../data/repositories/auth_repository_impl.dart';
 import '../domain/repositories/auth_repository.dart';
@@ -22,7 +23,11 @@ void registerAuthModule() {
 
   if (!sl.isRegistered<AuthRepository>()) {
     sl.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(sl<SupabaseService>(), sl<BaseApiClient>()),
+      () => AuthRepositoryImpl(
+        sl<SupabaseService>(),
+        sl<BaseApiClient>(),
+        sl<StorageService>(),
+      ),
     );
   }
 
@@ -68,7 +73,9 @@ void registerAuthModule() {
   }
 
   if (!sl.isRegistered<LoginCubit>()) {
-    sl.registerFactory<LoginCubit>(() => LoginCubit(sl<Login>()));
+    sl.registerFactory<LoginCubit>(
+      () => LoginCubit(sl<Login>(), sl<SocialLogin>()),
+    );
   }
 
   if (!sl.isRegistered<OtpCubit>()) {

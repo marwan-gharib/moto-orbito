@@ -104,6 +104,7 @@ class _Translations$auth$en implements Translations$auth$ar {
 	@override late final _Translations$auth$welcome$en welcome = _Translations$auth$welcome$en._(_root);
 	@override late final _Translations$auth$forgotPassword$en forgotPassword = _Translations$auth$forgotPassword$en._(_root);
 	@override late final _Translations$auth$socialLogin$en socialLogin = _Translations$auth$socialLogin$en._(_root);
+	@override late final _Translations$auth$profilePicture$en profilePicture = _Translations$auth$profilePicture$en._(_root);
 }
 
 // Path: onboarding
@@ -147,9 +148,12 @@ class _Translations$auth$signUp$en implements Translations$auth$signUp$ar {
 	@override String get fullName => 'Full Name';
 	@override String get email => 'Email';
 	@override String get password => 'Password';
+	@override String get confirmPassword => 'Confirm Password';
+	@override String get passwordMismatch => 'Passwords do not match';
 	@override String get phone => 'Phone';
 	@override String get submit => 'Create Account';
 	@override String get success => 'Account created successfully';
+	@override String get haveAccount => 'Already have an account?';
 }
 
 // Path: auth.login
@@ -164,6 +168,7 @@ class _Translations$auth$login$en implements Translations$auth$login$ar {
 	@override String get password => 'Password';
 	@override String get submit => 'Log In';
 	@override String get forgotPassword => 'Forgot Password?';
+	@override String get dontHaveAccount => 'Don\'t have an account?';
 }
 
 // Path: auth.verifyEmail
@@ -234,6 +239,20 @@ class _Translations$auth$socialLogin$en implements Translations$auth$socialLogin
 	// Translations
 	@override String get googleError => 'Google sign-in failed. Please try again.';
 	@override String get facebookError => 'Facebook sign-in failed. Please try again.';
+}
+
+// Path: auth.profilePicture
+class _Translations$auth$profilePicture$en implements Translations$auth$profilePicture$ar {
+	_Translations$auth$profilePicture$en._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pickPhoto => 'Pick Profile Photo';
+	@override String get changePhoto => 'Change Photo';
+	@override String get camera => 'Camera';
+	@override String get gallery => 'Gallery';
+	@override String get removePhoto => 'Remove Photo';
 }
 
 // Path: onboarding.slide1
@@ -316,14 +335,18 @@ extension on TranslationsEn {
 			'auth.signUp.fullName' => 'Full Name',
 			'auth.signUp.email' => 'Email',
 			'auth.signUp.password' => 'Password',
+			'auth.signUp.confirmPassword' => 'Confirm Password',
+			'auth.signUp.passwordMismatch' => 'Passwords do not match',
 			'auth.signUp.phone' => 'Phone',
 			'auth.signUp.submit' => 'Create Account',
 			'auth.signUp.success' => 'Account created successfully',
+			'auth.signUp.haveAccount' => 'Already have an account?',
 			'auth.login.title' => 'Log In',
 			'auth.login.email' => 'Email',
 			'auth.login.password' => 'Password',
 			'auth.login.submit' => 'Log In',
 			'auth.login.forgotPassword' => 'Forgot Password?',
+			'auth.login.dontHaveAccount' => 'Don\'t have an account?',
 			'auth.verifyEmail.title' => 'Verify Email',
 			'auth.verifyEmail.description' => 'Enter the code sent to your email',
 			'auth.verifyEmail.otpLabel' => 'Verification Code',
@@ -349,6 +372,11 @@ extension on TranslationsEn {
 			'auth.forgotPassword.success' => 'Check your email for the reset link.',
 			'auth.socialLogin.googleError' => 'Google sign-in failed. Please try again.',
 			'auth.socialLogin.facebookError' => 'Facebook sign-in failed. Please try again.',
+			'auth.profilePicture.pickPhoto' => 'Pick Profile Photo',
+			'auth.profilePicture.changePhoto' => 'Change Photo',
+			'auth.profilePicture.camera' => 'Camera',
+			'auth.profilePicture.gallery' => 'Gallery',
+			'auth.profilePicture.removePhoto' => 'Remove Photo',
 			'onboarding.slide1.title' => 'Ride Together',
 			'onboarding.slide1.description' => 'Connect with fellow riders and explore new routes together.',
 			'onboarding.slide2.title' => 'Stay in Orbit',

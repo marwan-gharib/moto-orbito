@@ -48,10 +48,13 @@ void main() {
         (_) async => const Success(null),
       );
 
-      final states = await cubit.sendEmailOtp('test@test.com').toList();
+      final expected = [
+        const OtpSending(),
+        isA<OtpSent>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const OtpSending());
-      expect(states[1], isA<OtpSent>());
+      await cubit.sendEmailOtp('test@test.com');
     });
 
     test('emits [OtpSending, OtpError] on failure', () async {
@@ -59,10 +62,13 @@ void main() {
         (_) async => const Failure(NetworkFailure()),
       );
 
-      final states = await cubit.sendEmailOtp('test@test.com').toList();
+      final expected = [
+        const OtpSending(),
+        isA<OtpError>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const OtpSending());
-      expect(states[1], isA<OtpError>());
+      await cubit.sendEmailOtp('test@test.com');
     });
   });
 
@@ -72,11 +78,13 @@ void main() {
         (_) async => const Success(null),
       );
 
-      final states =
-          await cubit.verifyEmailOtp('test@test.com', '123456').toList();
+      final expected = [
+        const OtpVerifying(),
+        const OtpVerified(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const OtpVerifying());
-      expect(states[1], const OtpVerified());
+      await cubit.verifyEmailOtp('test@test.com', '123456');
     });
   });
 
@@ -86,13 +94,14 @@ void main() {
         (_) async => const Success(null),
       );
 
-      await cubit.sendEmailOtp('test@test.com').toList();
-      await cubit.sendEmailOtp('test@test.com').toList();
-      await cubit.sendEmailOtp('test@test.com').toList();
+      await cubit.sendEmailOtp('test@test.com');
+      await cubit.sendEmailOtp('test@test.com');
+      await cubit.sendEmailOtp('test@test.com');
 
-      final states = await cubit.sendEmailOtp('test@test.com').toList();
+      final expected = [const OtpResendExhausted()];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states, [const OtpResendExhausted()]);
+      await cubit.sendEmailOtp('test@test.com');
     });
   });
 }

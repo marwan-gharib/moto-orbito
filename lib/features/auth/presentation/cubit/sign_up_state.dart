@@ -1,3 +1,5 @@
+import '../../domain/entities/user_entity.dart';
+
 sealed class SignUpState {
   const SignUpState();
 }
@@ -11,7 +13,9 @@ final class SignUpLoading extends SignUpState {
 }
 
 final class SignUpSuccess extends SignUpState {
-  const SignUpSuccess();
+  const SignUpSuccess({required this.user});
+
+  final UserEntity user;
 }
 
 final class SignUpError extends SignUpState {

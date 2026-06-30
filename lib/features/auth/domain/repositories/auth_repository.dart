@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:moto_orbito/core/error/api_result.dart';
 
 import '../../domain/entities/user_entity.dart';
@@ -7,13 +9,17 @@ final class SignUpParams {
     required this.email,
     required this.password,
     required this.fullName,
-    required this.phone,
+    this.phone,
+    this.profilePicturePath,
+    this.profilePictureBytes,
   });
 
   final String email;
   final String password;
   final String fullName;
-  final String phone;
+  final String? phone;
+  final String? profilePicturePath;
+  final Uint8List? profilePictureBytes;
 }
 
 final class LoginParams {

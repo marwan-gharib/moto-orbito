@@ -13,7 +13,7 @@ final class AppColors {
   static const Color onBackgroundLight = Color(0xFF1A1A1A);
   static const Color errorLight = Color(0xFFD32F2F);
   static const Color onErrorLight = Color(0xFFFFFFFF);
-  
+
   static const Color successLight = Color(0xFF388E3C);
   static const Color warningLight = Color(0xFFF57C00);
   static const Color dividerLight = Color(0xFFE0E0E0);
@@ -25,7 +25,7 @@ final class AppColors {
   static const Color onPrimaryDark = Color(0xFF1A1A1A);
   static const Color surfaceDark = Color(0xFF1A1A1A);
   static const Color onSurfaceDark = Color(0xFFF5F5F5);
-  static const Color backgroundDark = Color(0xFF121212);
+  static const Color backgroundDark = Color(0xFF0A0A0F);
   static const Color onBackgroundDark = Color(0xFFE0E0E0);
   static const Color errorDark = Color(0xFFEF9A9A);
   static const Color onErrorDark = Color(0xFF1A1A1A);
@@ -34,4 +34,16 @@ final class AppColors {
   static const Color warningDark = Color(0xFFFFCC80);
   static const Color dividerDark = Color(0xFF2C2C2C);
   static const Color skeletonDark = Color(0xFF2C2C2C);
+
+  // Neon Accent Colors
+  static const Color neonOrange = Color(0xFFFF6B00);
+  static const Color neonOrangeLight = Color(0xFFFF8C33);
+  static const Color neonBlue = Color(0xFF00D4FF);
+  static const Color neonViolet = Color(0xFF8B5CF6);
+
+  // Dark Theme Surfaces
+  static const Color asphaltDark = Color(0xFF0A0A0F);
+  static const Color cardDark = Color(0xFF16161E);
+  static const Color inputDark = Color(0xFF1E1E2A);
+  static const Color surfaceDarkAlt = Color(0xFF12121A);
 }

@@ -12,6 +12,7 @@ final class AuthUserModel {
     this.fcmToken,
     this.locale = 'ar',
     required this.createdAt,
+    this.profilePicture,
   });
 
   final String id;
@@ -23,6 +24,7 @@ final class AuthUserModel {
   final String? fcmToken;
   final String locale;
   final String createdAt;
+  final String? profilePicture;
 
   factory AuthUserModel.fromJson(Map<String, dynamic> json) {
     return AuthUserModel(
@@ -35,6 +37,7 @@ final class AuthUserModel {
       fcmToken: json[SupabaseKeys.fcmToken] as String?,
       locale: json[SupabaseKeys.locale] as String? ?? 'ar',
       createdAt: json[SupabaseKeys.createdAt] as String,
+      profilePicture: json[SupabaseKeys.profilePicture] as String?,
     );
   }
 
@@ -49,6 +52,7 @@ final class AuthUserModel {
       SupabaseKeys.fcmToken: fcmToken,
       SupabaseKeys.locale: locale,
       SupabaseKeys.createdAt: createdAt,
+      SupabaseKeys.profilePicture: profilePicture,
     };
   }
 
@@ -63,6 +67,7 @@ final class AuthUserModel {
       fcmToken: fcmToken,
       locale: locale,
       createdAt: DateTime.parse(createdAt),
+      profilePicture: profilePicture,
     );
   }
 }

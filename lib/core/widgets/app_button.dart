@@ -11,6 +11,8 @@ final class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.isDisabled = false,
     this.variant = AppButtonVariant.primary,
+    this.leading,
+    this.borderColor,
     super.key,
   });
 
@@ -19,6 +21,8 @@ final class AppButton extends StatelessWidget {
   final bool isLoading;
   final bool isDisabled;
   final AppButtonVariant variant;
+  final Widget? leading;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +40,10 @@ final class AppButton extends StatelessWidget {
           foregroundColor: foreground,
           disabledBackgroundColor: divider,
           disabledForegroundColor: colors.onSurface,
+          side: borderColor != null ? BorderSide(color: borderColor!) : null,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: Spacing.md,
             vertical: Spacing.md,
@@ -53,13 +61,23 @@ final class AppButton extends StatelessWidget {
                     color: foreground,
                   ),
                 )
-              : Text(
-                  label,
+              : Row(
                   key: const ValueKey('label'),
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.labelLarge?.copyWith(
-                    color: foreground,
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (leading != null) ...[
+                      leading!,
+                      const SizedBox(width: Spacing.sm),
+                    ],
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.labelLarge?.copyWith(
+                        color: foreground,
+                      ),
+                    ),
+                  ],
                 ),
         ),
       ),

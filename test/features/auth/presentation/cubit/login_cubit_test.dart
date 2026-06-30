@@ -5,13 +5,24 @@ import 'package:moto_orbito/core/error/failure.dart';
 import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/login.dart';
+import 'package:moto_orbito/features/auth/domain/use_cases/social_login.dart';
 import 'package:moto_orbito/features/auth/presentation/cubit/login_cubit.dart';
 import 'package:moto_orbito/features/auth/presentation/cubit/login_state.dart';
 
 class MockLogin extends Mock implements Login {}
 
+class MockSocialLogin extends Mock implements SocialLogin {}
+
+final _testUser = UserEntity(
+  id: 'uid-1',
+  email: 'test@test.com',
+  fullName: 'Test',
+  createdAt: DateTime(2026),
+);
+
 void main() {
   late Login login;
+  late SocialLogin socialLogin;
   late LoginCubit cubit;
 
   setUpAll(() {
@@ -22,7 +33,8 @@ void main() {
 
   setUp(() {
     login = MockLogin();
-    cubit = LoginCubit(login);
+    socialLogin = MockSocialLogin();
+    cubit = LoginCubit(login, socialLogin);
   });
 
   tearDown(() {
@@ -36,22 +48,16 @@ void main() {
   group('login', () {
     test('emits [LoginLoading, LoginSuccess] on success', () async {
       when(() => login(any())).thenAnswer(
-        (_) async => Success(
-          UserEntity(
-            id: 'uid-1',
-            email: 'test@test.com',
-            fullName: 'Test',
-            createdAt: DateTime(2026),
-          ),
-        ),
+        (_) async => Success(_testUser),
       );
 
-      final states = await cubit
-          .login(email: 'test@test.com', password: 'password123')
-          .toList();
+      final expected = [
+        const LoginLoading(),
+        isA<LoginSuccess>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const LoginLoading());
-      expect(states[1], isA<LoginSuccess>());
+      await cubit.login(email: 'test@test.com', password: 'password123');
     });
 
     test('emits [LoginLoading, LoginError] on failure', () async {
@@ -61,12 +67,13 @@ void main() {
         ),
       );
 
-      final states = await cubit
-          .login(email: 'test@test.com', password: 'wrong')
-          .toList();
+      final expected = [
+        const LoginLoading(),
+        isA<LoginError>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const LoginLoading());
-      expect(states[1], isA<LoginError>());
+      await cubit.login(email: 'test@test.com', password: 'wrong');
     });
   });
 }

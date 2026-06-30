@@ -7,6 +7,7 @@ import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
 import 'package:moto_orbito/core/error/failure_mapper.dart';
 import 'package:moto_orbito/core/network/base_api_client.dart';
+import 'package:moto_orbito/core/services/supabase/storage_service.dart';
 import 'package:moto_orbito/core/services/supabase/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
@@ -15,10 +16,15 @@ import '../../domain/repositories/auth_repository.dart';
 import '../models/auth_user_model.dart';
 
 final class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this._supabaseService, this._apiClient);
+  AuthRepositoryImpl(
+    this._supabaseService,
+    this._apiClient,
+    this._storageService,
+  );
 
   final SupabaseService _supabaseService;
   final BaseApiClient _apiClient;
+  final StorageService _storageService;
 
   supabase.SupabaseClient get _client => _supabaseService.client;
 
@@ -39,6 +45,22 @@ final class AuthRepositoryImpl implements AuthRepository {
       if (user == null) {
         return const Failure(AuthFailure());
       }
+
+      String? profilePictureUrl;
+      if (params.profilePictureBytes != null && params.profilePicturePath != null) {
+        final uploadResult = await _storageService.uploadFile(
+          bucket: SupabaseKeys.profilesBucket,
+          path: '${user.id}/${params.profilePicturePath!}',
+          bytes: params.profilePictureBytes!,
+        );
+        switch (uploadResult) {
+          case Success(data: final url):
+            profilePictureUrl = url;
+          case Failure():
+            break;
+        }
+      }
+
       final model = AuthUserModel(
         id: user.id,
         email: user.email ?? params.email,
@@ -47,7 +69,16 @@ final class AuthRepositoryImpl implements AuthRepository {
         phone: params.phone,
         locale: AppConstants.defaultLocale,
         createdAt: user.createdAt,
+        profilePicture: profilePictureUrl,
       );
+
+      if (profilePictureUrl != null) {
+        await _client
+            .from(SupabaseKeys.users)
+            .update({SupabaseKeys.profilePicture: profilePictureUrl})
+            .eq(SupabaseKeys.id, user.id);
+      }
+
       return Success(model.toEntity());
     } on supabase.AuthException catch (e) {
       return Failure(
@@ -118,13 +149,19 @@ final class AuthRepositoryImpl implements AuthRepository {
         return const Failure(AuthFailure());
       }
       final isFirst = await isFirstTimeUser(sessionUser.id);
+      final fullName = sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
+          sessionUser.userMetadata?[SupabaseKeys.name] as String? ??
+          '';
+      final profilePic = sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
+          sessionUser.userMetadata?[SupabaseKeys.picture] as String?;
       final model = AuthUserModel(
         id: sessionUser.id,
         email: sessionUser.email ?? '',
         emailConfirmedAt: sessionUser.emailConfirmedAt,
-        fullName: sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ?? '',
+        fullName: fullName,
         locale: AppConstants.defaultLocale,
         createdAt: sessionUser.createdAt,
+        profilePicture: profilePic,
       );
       return Success(model.toEntity().copyWith(isFirstTimeUser: isFirst));
     } on supabase.AuthException catch (e) {
@@ -147,13 +184,19 @@ final class AuthRepositoryImpl implements AuthRepository {
         return const Failure(AuthFailure());
       }
       final isFirst = await isFirstTimeUser(sessionUser.id);
+      final fullName = sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
+          sessionUser.userMetadata?[SupabaseKeys.name] as String? ??
+          '';
+      final profilePic = sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
+          sessionUser.userMetadata?[SupabaseKeys.picture] as String?;
       final model = AuthUserModel(
         id: sessionUser.id,
         email: sessionUser.email ?? '',
         emailConfirmedAt: sessionUser.emailConfirmedAt,
-        fullName: sessionUser.userMetadata?[SupabaseKeys.name] as String? ?? '',
+        fullName: fullName,
         locale: AppConstants.defaultLocale,
         createdAt: sessionUser.createdAt,
+        profilePicture: profilePic,
       );
       return Success(model.toEntity().copyWith(isFirstTimeUser: isFirst));
     } on supabase.AuthException catch (e) {

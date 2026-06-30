@@ -42,6 +42,9 @@ final class SupabaseKeys {
   static const String email = 'email';
   static const String password = 'password';
   static const String locale = 'locale';
+  static const String profilePicture = 'profile_photo_url';
+  static const String avatarUrl = 'avatar_url';
+  static const String picture = 'picture';
 
   // ── rides Columns ──────────────────────────────────────────────────────────
   static const String rideId = 'ride_id';

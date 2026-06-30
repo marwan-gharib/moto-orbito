@@ -161,6 +161,7 @@ class Translations$auth$ar {
 	late final Translations$auth$welcome$ar welcome = Translations$auth$welcome$ar._(_root);
 	late final Translations$auth$forgotPassword$ar forgotPassword = Translations$auth$forgotPassword$ar._(_root);
 	late final Translations$auth$socialLogin$ar socialLogin = Translations$auth$socialLogin$ar._(_root);
+	late final Translations$auth$profilePicture$ar profilePicture = Translations$auth$profilePicture$ar._(_root);
 }
 
 // Path: onboarding
@@ -231,6 +232,12 @@ class Translations$auth$signUp$ar {
 	/// ar: 'كلمة المرور'
 	String get password => 'كلمة المرور';
 
+	/// ar: 'تأكيد كلمة المرور'
+	String get confirmPassword => 'تأكيد كلمة المرور';
+
+	/// ar: 'كلمتا المرور غير متطابقتين'
+	String get passwordMismatch => 'كلمتا المرور غير متطابقتين';
+
 	/// ar: 'رقم الهاتف'
 	String get phone => 'رقم الهاتف';
 
@@ -239,6 +246,9 @@ class Translations$auth$signUp$ar {
 
 	/// ar: 'تم إنشاء الحساب بنجاح'
 	String get success => 'تم إنشاء الحساب بنجاح';
+
+	/// ar: 'لديك حساب بالفعل؟'
+	String get haveAccount => 'لديك حساب بالفعل؟';
 }
 
 // Path: auth.login
@@ -263,6 +273,9 @@ class Translations$auth$login$ar {
 
 	/// ar: 'نسيت كلمة المرور؟'
 	String get forgotPassword => 'نسيت كلمة المرور؟';
+
+	/// ar: 'ليس لديك حساب؟'
+	String get dontHaveAccount => 'ليس لديك حساب؟';
 }
 
 // Path: auth.verifyEmail
@@ -385,6 +398,30 @@ class Translations$auth$socialLogin$ar {
 	String get facebookError => 'فشل تسجيل الدخول عبر Facebook. حاول مرة أخرى.';
 }
 
+// Path: auth.profilePicture
+class Translations$auth$profilePicture$ar {
+	Translations$auth$profilePicture$ar._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// ar: 'اختيار صورة الملف الشخصي'
+	String get pickPhoto => 'اختيار صورة الملف الشخصي';
+
+	/// ar: 'تغيير الصورة'
+	String get changePhoto => 'تغيير الصورة';
+
+	/// ar: 'الكاميرا'
+	String get camera => 'الكاميرا';
+
+	/// ar: 'المعرض'
+	String get gallery => 'المعرض';
+
+	/// ar: 'إزالة الصورة'
+	String get removePhoto => 'إزالة الصورة';
+}
+
 // Path: onboarding.slide1
 class Translations$onboarding$slide1$ar {
 	Translations$onboarding$slide1$ar._(this._root);
@@ -477,14 +514,18 @@ extension on Translations {
 			'auth.signUp.fullName' => 'الاسم الكامل',
 			'auth.signUp.email' => 'البريد الإلكتروني',
 			'auth.signUp.password' => 'كلمة المرور',
+			'auth.signUp.confirmPassword' => 'تأكيد كلمة المرور',
+			'auth.signUp.passwordMismatch' => 'كلمتا المرور غير متطابقتين',
 			'auth.signUp.phone' => 'رقم الهاتف',
 			'auth.signUp.submit' => 'إنشاء حساب',
 			'auth.signUp.success' => 'تم إنشاء الحساب بنجاح',
+			'auth.signUp.haveAccount' => 'لديك حساب بالفعل؟',
 			'auth.login.title' => 'تسجيل الدخول',
 			'auth.login.email' => 'البريد الإلكتروني',
 			'auth.login.password' => 'كلمة المرور',
 			'auth.login.submit' => 'تسجيل الدخول',
 			'auth.login.forgotPassword' => 'نسيت كلمة المرور؟',
+			'auth.login.dontHaveAccount' => 'ليس لديك حساب؟',
 			'auth.verifyEmail.title' => 'تأكيد البريد الإلكتروني',
 			'auth.verifyEmail.description' => 'أدخل الرمز المرسل إلى بريدك الإلكتروني',
 			'auth.verifyEmail.otpLabel' => 'رمز التحقق',
@@ -510,6 +551,11 @@ extension on Translations {
 			'auth.forgotPassword.success' => 'تحقق من بريدك الإلكتروني لاستلام رابط إعادة التعيين.',
 			'auth.socialLogin.googleError' => 'فشل تسجيل الدخول عبر Google. حاول مرة أخرى.',
 			'auth.socialLogin.facebookError' => 'فشل تسجيل الدخول عبر Facebook. حاول مرة أخرى.',
+			'auth.profilePicture.pickPhoto' => 'اختيار صورة الملف الشخصي',
+			'auth.profilePicture.changePhoto' => 'تغيير الصورة',
+			'auth.profilePicture.camera' => 'الكاميرا',
+			'auth.profilePicture.gallery' => 'المعرض',
+			'auth.profilePicture.removePhoto' => 'إزالة الصورة',
 			'onboarding.slide1.title' => 'اركب معاً',
 			'onboarding.slide1.description' => 'تواصل مع زملائك الدراجين واستكشف طرقاً جديدة معاً.',
 			'onboarding.slide2.title' => 'ابق في المدار',

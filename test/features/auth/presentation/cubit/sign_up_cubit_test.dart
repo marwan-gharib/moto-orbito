@@ -10,6 +10,13 @@ import 'package:moto_orbito/features/auth/presentation/cubit/sign_up_state.dart'
 
 class MockSignUp extends Mock implements SignUp {}
 
+final _testUser = UserEntity(
+  id: 'uid-1',
+  email: 'test@test.com',
+  fullName: 'Test',
+  createdAt: DateTime(2026),
+);
+
 void main() {
   late SignUp signUp;
   late SignUpCubit cubit;
@@ -20,7 +27,6 @@ void main() {
         email: 'fallback@test.com',
         password: 'fallback123',
         fullName: 'Fallback',
-        phone: '+971500000000',
       ),
     );
   });
@@ -41,27 +47,20 @@ void main() {
   group('signUp', () {
     test('emits [SignUpLoading, SignUpSuccess] on success', () async {
       when(() => signUp(any())).thenAnswer(
-        (_) async => Success(
-          UserEntity(
-            id: 'uid-1',
-            email: 'test@test.com',
-            fullName: 'Test',
-            createdAt: DateTime(2026),
-          ),
-        ),
+        (_) async => Success(_testUser),
       );
 
-      final states = await cubit
-          .signUp(
-            email: 'test@test.com',
-            password: 'password123',
-            fullName: 'Test',
-            phone: '+971501234567',
-          )
-          .toList();
+      final expected = [
+        const SignUpLoading(),
+        isA<SignUpSuccess>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const SignUpLoading());
-      expect(states[1], const SignUpSuccess());
+      await cubit.signUp(
+        email: 'test@test.com',
+        password: 'password123',
+        fullName: 'Test',
+      );
     });
 
     test('emits [SignUpLoading, SignUpError] on failure', () async {
@@ -71,17 +70,17 @@ void main() {
         ),
       );
 
-      final states = await cubit
-          .signUp(
-            email: 'test@test.com',
-            password: 'password123',
-            fullName: 'Test',
-            phone: '+971501234567',
-          )
-          .toList();
+      final expected = [
+        const SignUpLoading(),
+        isA<SignUpError>(),
+      ];
+      expectLater(cubit.stream, emitsInOrder(expected));
 
-      expect(states[0], const SignUpLoading());
-      expect(states[1], isA<SignUpError>());
+      await cubit.signUp(
+        email: 'test@test.com',
+        password: 'password123',
+        fullName: 'Test',
+      );
     });
   });
 }

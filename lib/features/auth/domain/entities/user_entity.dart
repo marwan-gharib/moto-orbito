@@ -12,6 +12,7 @@ final class UserEntity extends Equatable {
     this.locale = 'ar',
     required this.createdAt,
     this.isFirstTimeUser = false,
+    this.profilePicture,
   });
 
   final String id;
@@ -24,6 +25,7 @@ final class UserEntity extends Equatable {
   final String locale;
   final DateTime createdAt;
   final bool isFirstTimeUser;
+  final String? profilePicture;
 
   UserEntity copyWith({
     String? id,
@@ -36,6 +38,7 @@ final class UserEntity extends Equatable {
     String? locale,
     DateTime? createdAt,
     bool? isFirstTimeUser,
+    String? profilePicture,
   }) {
     return UserEntity(
       id: id ?? this.id,
@@ -48,6 +51,7 @@ final class UserEntity extends Equatable {
       locale: locale ?? this.locale,
       createdAt: createdAt ?? this.createdAt,
       isFirstTimeUser: isFirstTimeUser ?? this.isFirstTimeUser,
+      profilePicture: profilePicture ?? this.profilePicture,
     );
   }
 

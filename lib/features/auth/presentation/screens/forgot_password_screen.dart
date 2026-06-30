@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moto_orbito/core/constants/app_validation.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
@@ -28,9 +27,9 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t.auth.forgotPassword;
     return BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
       builder: (context, state) {
-        final t = context.t.auth.forgotPassword;
         return switch (state) {
           ForgotPasswordSent() => _buildSuccess(context, t.success),
           _ => _buildForm(context, t),
@@ -40,23 +39,35 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _buildSuccess(BuildContext context, String message) {
+    final colors = context.colorScheme;
     return Scaffold(
-      appBar: AppBar(title: Text(context.t.auth.forgotPassword.title)),
+      appBar: AppBar(
+        title: Text(context.t.auth.forgotPassword.title),
+        centerTitle: true,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(Spacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.check_circle,
-                size: 64,
-                color: context.colorScheme.primary,
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colors.primary.withAlpha(25),
+                ),
+                child: Icon(
+                  Icons.check_circle,
+                  size: 48,
+                  color: colors.primary,
+                ),
               ),
               const SizedBox(height: Spacing.lg),
               Text(
                 message,
-                style: context.textTheme.bodyLarge,
+                style: context.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -66,9 +77,18 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildForm(BuildContext context, dynamic t) {
+  Widget _buildForm(BuildContext context, Object t) {
+    final colors = context.colorScheme;
+    final title = (t as dynamic).title as String;
+    final description = (t as dynamic).description as String;
+    final email = (t as dynamic).email as String;
+    final send = (t as dynamic).send as String;
+
     return Scaffold(
-      appBar: AppBar(title: Text(t.title as String)),
+      appBar: AppBar(
+        title: Text(title),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
         child: Form(
@@ -86,19 +106,37 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const SizedBox(height: Spacing.xl),
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colors.primary.withAlpha(25),
+                    ),
+                    child: Icon(
+                      Icons.lock_reset,
+                      size: 36,
+                      color: colors.primary,
+                    ),
+                  ),
                   const SizedBox(height: Spacing.lg),
                   Text(
-                    t.description as String,
-                    style: context.textTheme.bodyLarge,
+                    description,
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: colors.onSurface.withAlpha(179),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: Spacing.lg),
                   AppTextField(
-                    label: t.email as String,
-                    hint: t.email as String,
+                    label: email,
+                    hint: email,
                     controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (v) =>
                         v == null || !v.contains('@')
-                            ? AppValidation.emailRequired
+                            ? context.t.errors.fieldRequired
                             : null,
                   ),
                   if (errorMessage != null) ...[
@@ -113,7 +151,7 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ],
                   const SizedBox(height: Spacing.xl),
                   AppButton(
-                    label: t.send as String,
+                    label: send,
                     isLoading: isLoading,
                     onTap: () {
                       if (_formKey.currentState?.validate() == true) {

@@ -17,6 +17,8 @@ void main() {
               expect(colors?.success, isNotNull);
               expect(colors?.warning, isNotNull);
               expect(colors?.skeleton, isNotNull);
+              expect(colors?.neonAccent, isNotNull);
+              expect(colors?.surfaceCard, isNotNull);
               return const SizedBox.shrink();
             },
           ),
