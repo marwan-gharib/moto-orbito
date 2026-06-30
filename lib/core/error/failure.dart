@@ -33,3 +33,7 @@ final class StorageFailure extends AppFailure {
 final class UnexpectedFailure extends AppFailure {
   const UnexpectedFailure() : super('errors.unexpected');
 }
+
+final class CacheFailure extends AppFailure {
+  const CacheFailure() : super('errors.cache');
+}

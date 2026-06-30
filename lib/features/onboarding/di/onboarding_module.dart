@@ -1,6 +1,6 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../core/local/cache/cache_service.dart';
 import '../data/repositories/onboarding_local_repository_impl.dart';
 import '../domain/repositories/onboarding_local_repository.dart';
 import '../domain/use_cases/check_onboarding_complete.dart';
@@ -12,7 +12,9 @@ void registerOnboardingModule() {
 
   if (!sl.isRegistered<OnboardingLocalRepository>()) {
     sl.registerLazySingleton<OnboardingLocalRepository>(
-      () => OnboardingLocalRepositoryImpl(sl<FlutterSecureStorage>()),
+      () => OnboardingLocalRepositoryImpl(
+        sl<CacheService>(),
+      ),
     );
   }
 

@@ -81,6 +81,7 @@ class _Translations$errors$en implements Translations$errors$ar {
 	@override String get storage => 'The requested file could not be processed.';
 	@override String get unexpected => 'An unexpected error occurred.';
 	@override String get fieldRequired => 'This field is required.';
+	@override String get cache => 'An error occurred while accessing the cache.';
 }
 
 // Path: auth
@@ -299,6 +300,7 @@ extension on TranslationsEn {
 			'errors.storage' => 'The requested file could not be processed.',
 			'errors.unexpected' => 'An unexpected error occurred.',
 			'errors.fieldRequired' => 'This field is required.',
+			'errors.cache' => 'An error occurred while accessing the cache.',
 			'auth.emailAlreadyExists' => 'Email is already registered.',
 			'auth.emailNotVerified' => 'Please verify your email first.',
 			'auth.invalidCredentials' => 'Invalid login credentials.',

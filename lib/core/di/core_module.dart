@@ -1,18 +1,19 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/network/dio_client.dart';
 import 'package:moto_orbito/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../local/cache/cache_service.dart';
+import '../local/cache/shared_prefrences_service.dart';
+import '../local/secure/flutter_secure_storage_client.dart';
+import '../local/secure/secure_storage_client.dart';
 import '../network/base_api_client.dart';
 import '../router/app_router.dart';
 import '../router/deep_link_intent.dart';
-import '../services/ai/ai_service.dart';
-import '../services/fcm/fcm_service.dart';
 import '../services/supabase/realtime_service.dart';
 import '../services/supabase/storage_service.dart';
 import '../services/supabase/supabase_service.dart';
@@ -23,6 +24,19 @@ void registerCoreModule({required String baseUrl}) {
 
   if (!sl.isRegistered<FlutterSecureStorage>()) {
     sl.registerLazySingleton<FlutterSecureStorage>(FlutterSecureStorage.new);
+  }
+  if (!sl.isRegistered<SharedPreferences>()) {
+    sl.registerSingletonAsync<SharedPreferences>(SharedPreferences.getInstance);
+  }
+  if (!sl.isRegistered<CacheService>()) {
+    sl.registerLazySingleton<CacheService>(
+      () => SharedPreferencesService(sl<SharedPreferences>()),
+    );
+  }
+  if (!sl.isRegistered<SecureStorageClient>()) {
+    sl.registerLazySingleton<SecureStorageClient>(
+      () => FlutterSecureStorageClient(sl<FlutterSecureStorage>()),
+    );
   }
   if (!sl.isRegistered<Connectivity>()) {
     sl.registerLazySingleton<Connectivity>(Connectivity.new);
@@ -44,9 +58,9 @@ void registerCoreModule({required String baseUrl}) {
   if (!sl.isRegistered<StorageService>()) {
     sl.registerLazySingleton<StorageService>(() => StorageService(sl()));
   }
-  if (!sl.isRegistered<AiService>()) {
-    sl.registerLazySingleton<AiService>(() => AiService(sl()));
-  }
+  // if (!sl.isRegistered<AiService>()) {
+  //   sl.registerLazySingleton<AiService>(() => AiService(sl()));
+  // }
   if (!sl.isRegistered<DeepLinkIntentStore>()) {
     sl.registerLazySingleton<DeepLinkIntentStore>(
       () => DeepLinkIntentStore(sl()),
@@ -60,24 +74,24 @@ void registerCoreModule({required String baseUrl}) {
   if (!sl.isRegistered<GoRouter>()) {
     sl.registerLazySingleton<GoRouter>(() => sl<AppRouter>().router());
   }
-  if (!sl.isRegistered<FlutterLocalNotificationsPlugin>()) {
-    sl.registerLazySingleton<FlutterLocalNotificationsPlugin>(
-      FlutterLocalNotificationsPlugin.new,
-    );
-  }
-  if (!sl.isRegistered<FirebaseMessaging>()) {
-    sl.registerLazySingleton<FirebaseMessaging>(
-      () => FirebaseMessaging.instance,
-    );
-  }
-  if (!sl.isRegistered<FcmService>()) {
-    sl.registerLazySingleton<FcmService>(
-      () => FcmService(
-        sl(),
-        sl(),
-        sl(),
-        (location) => sl<GoRouter>().go(location),
-      ),
-    );
-  }
+  // if (!sl.isRegistered<FlutterLocalNotificationsPlugin>()) {
+  //   sl.registerLazySingleton<FlutterLocalNotificationsPlugin>(
+  //     FlutterLocalNotificationsPlugin.new,
+  //   );
+  // }
+  // if (!sl.isRegistered<FirebaseMessaging>()) {
+  //   sl.registerLazySingleton<FirebaseMessaging>(
+  //     () => FirebaseMessaging.instance,
+  //   );
+  // }
+  // if (!sl.isRegistered<FcmService>()) {
+  //   sl.registerLazySingleton<FcmService>(
+  //     () => FcmService(
+  //       sl(),
+  //       sl(),
+  //       sl(),
+  //       (location) => sl<GoRouter>().go(location),
+  //     ),
+  //   );
+  // }
 }

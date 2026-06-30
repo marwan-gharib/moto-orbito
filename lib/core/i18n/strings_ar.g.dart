@@ -125,6 +125,9 @@ class Translations$errors$ar {
 
 	/// ar: 'هذا الحقل مطلوب.'
 	String get fieldRequired => 'هذا الحقل مطلوب.';
+
+	/// ar: 'حدث خطأ أثناء الوصول إلى ذاكرة التخزين المؤقت.'
+	String get cache => 'حدث خطأ أثناء الوصول إلى ذاكرة التخزين المؤقت.';
 }
 
 // Path: auth
@@ -458,6 +461,7 @@ extension on Translations {
 			'errors.storage' => 'تعذر معالجة الملف المطلوب.',
 			'errors.unexpected' => 'حدث خطأ غير متوقع.',
 			'errors.fieldRequired' => 'هذا الحقل مطلوب.',
+			'errors.cache' => 'حدث خطأ أثناء الوصول إلى ذاكرة التخزين المؤقت.',
 			'auth.emailAlreadyExists' => 'البريد الإلكتروني مسجل بالفعل.',
 			'auth.emailNotVerified' => 'يرجى تأكيد بريدك الإلكتروني أولاً.',
 			'auth.invalidCredentials' => 'بيانات تسجيل الدخول غير صحيحة.',

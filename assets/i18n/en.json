@@ -24,7 +24,8 @@
     "permission": "You do not have the required permission.",
     "storage": "The requested file could not be processed.",
     "unexpected": "An unexpected error occurred.",
-    "fieldRequired": "This field is required."
+    "fieldRequired": "This field is required.",
+    "cache": "An error occurred while accessing the cache."
   },
   "auth": {
     "emailAlreadyExists": "Email is already registered.",

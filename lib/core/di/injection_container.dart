@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,16 +14,16 @@ Future<void> initDependencies({
   required String supabaseUrl,
   required String supabaseAnonKey,
 }) async {
-  try {
-    await Firebase.initializeApp();
-  } catch (error, stackTrace) {
-    AppLogger.warning('Firebase initialization failed');
-    AppLogger.error(
-      'Firebase initialization error',
-      error: error,
-      stackTrace: stackTrace,
-    );
-  }
+  // try {
+  //   await Firebase.initializeApp();
+  // } catch (error, stackTrace) {
+  //   AppLogger.warning('Firebase initialization failed');
+  //   AppLogger.error(
+  //     'Firebase initialization error',
+  //     error: error,
+  //     stackTrace: stackTrace,
+  //   );
+  // }
 
   try {
     if (!supabaseInitialized) {
@@ -33,6 +32,7 @@ Future<void> initDependencies({
         publishableKey: supabaseAnonKey,
       );
       supabaseInitialized = true;
+      AppLogger.info('Supabase initialized successfully');
     }
   } catch (error, stackTrace) {
     supabaseInitialized = false;

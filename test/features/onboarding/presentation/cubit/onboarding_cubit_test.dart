@@ -42,27 +42,42 @@ void main() {
       expect(cubit.state, const OnboardingComplete());
     });
 
-    test('emits loading then initial when onboarding is not done', () async {
+    test('emits loading then in progress at page 0 when onboarding is not done',
+        () async {
       when(() => checkUseCase()).thenAnswer((_) async => const Success(false));
 
       await cubit.checkOnboardingStatus();
 
-      expect(cubit.state, const OnboardingInitial());
+      expect(
+        cubit.state,
+        isA<OnboardingInProgress>().having(
+          (s) => s.currentPage,
+          'currentPage',
+          0,
+        ),
+      );
     });
 
-    test('emits loading then initial on failure', () async {
+    test('emits loading then in progress at page 0 on failure', () async {
       when(() => checkUseCase())
           .thenAnswer((_) async => const Failure(StorageFailure()));
 
       await cubit.checkOnboardingStatus();
 
-      expect(cubit.state, const OnboardingInitial());
+      expect(
+        cubit.state,
+        isA<OnboardingInProgress>().having(
+          (s) => s.currentPage,
+          'currentPage',
+          0,
+        ),
+      );
     });
   });
 
   group('nextPage', () {
     test('advances from page 0 to page 1', () {
-      cubit.emit(const OnboardingInProgress(currentPage: 0));
+      cubit.setPage(0);
 
       cubit.nextPage();
 
@@ -77,7 +92,7 @@ void main() {
     });
 
     test('advances from page 1 to page 2', () {
-      cubit.emit(const OnboardingInProgress(currentPage: 1));
+      cubit.setPage(1);
 
       cubit.nextPage();
 
@@ -92,7 +107,7 @@ void main() {
     });
 
     test('does not advance beyond last page', () {
-      cubit.emit(const OnboardingInProgress(currentPage: 2));
+      cubit.setPage(2);
 
       cubit.nextPage();
 

@@ -1,34 +1,33 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/core/local/cache/cache_service.dart';
 
 import '../../domain/repositories/onboarding_local_repository.dart';
 
-final class OnboardingLocalRepositoryImpl
-    implements OnboardingLocalRepository {
-  OnboardingLocalRepositoryImpl(this._storage);
+final class OnboardingLocalRepositoryImpl implements OnboardingLocalRepository {
+  OnboardingLocalRepositoryImpl(this._cacheService);
 
-  final FlutterSecureStorage _storage;
+  final CacheService _cacheService;
 
-  static const String _onboardingSeenKey = 'onboarding_seen';
+  static const String _onboardingCacheKey = 'onboarding_seen_cache';
 
   @override
   Future<ApiResult<bool>> isOnboardingComplete() async {
     try {
-      final value = await _storage.read(key: _onboardingSeenKey);
-      return Success(value == 'true');
+      final cachedValue = _cacheService.get(_onboardingCacheKey);
+      return Success(cachedValue == true);
     } on Object {
-      return const Failure(StorageFailure());
+      return const Failure(CacheFailure());
     }
   }
 
   @override
   Future<ApiResult<void>> markOnboardingComplete() async {
     try {
-      await _storage.write(key: _onboardingSeenKey, value: 'true');
+      await _cacheService.setData(key: _onboardingCacheKey, value: true);
       return const Success(null);
     } on Object {
-      return const Failure(StorageFailure());
+      return const Failure(CacheFailure());
     }
   }
 }

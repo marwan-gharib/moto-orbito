@@ -8,10 +8,8 @@ import '../../domain/use_cases/mark_onboarding_complete.dart';
 import 'onboarding_state.dart';
 
 final class OnboardingCubit extends Cubit<OnboardingState> {
-  OnboardingCubit(
-    this._checkOnboardingComplete,
-    this._markOnboardingComplete,
-  ) : super(const OnboardingInitial());
+  OnboardingCubit(this._checkOnboardingComplete, this._markOnboardingComplete)
+    : super(const OnboardingInitial());
 
   final CheckOnboardingComplete _checkOnboardingComplete;
   final MarkOnboardingComplete _markOnboardingComplete;
@@ -19,28 +17,30 @@ final class OnboardingCubit extends Cubit<OnboardingState> {
   static const int totalPages = 3;
 
   Future<void> checkOnboardingStatus() async {
-    emit(const OnboardingLoading());
     final result = await _checkOnboardingComplete();
     switch (result) {
       case Success(data: true):
         emit(const OnboardingComplete());
       case Success(data: false):
-        emit(const OnboardingInitial());
+        emit(const OnboardingInProgress(currentPage: 0));
       case Failure():
-        emit(const OnboardingInitial());
+        emit(const OnboardingInProgress(currentPage: 0));
     }
+  }
+
+  void setPage(int page) {
+    emit(OnboardingInProgress(currentPage: page));
   }
 
   void nextPage() {
     if (state case OnboardingInProgress(currentPage: final page)) {
       if (page < totalPages - 1) {
-        emit(OnboardingInProgress(currentPage: page + 1));
+        setPage(page + 1);
       }
     }
   }
 
   Future<void> completeOnboarding() async {
-    emit(const OnboardingLoading());
     final result = await _markOnboardingComplete();
     switch (result) {
       case Success():

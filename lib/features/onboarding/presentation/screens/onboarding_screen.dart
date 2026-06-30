@@ -1,31 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
+import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
+import 'package:moto_orbito/core/widgets/error_state_widget.dart';
 
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
+import '../widgets/onboarding_page_indicator.dart';
+import '../widgets/onboarding_slide.dart';
 
-final class OnboardingScreen extends StatelessWidget {
+final class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
-  static const _slideIcons = <int, IconData>{
-    0: Icons.groups,
-    1: Icons.satellite_alt,
-    2: Icons.auto_awesome,
-  };
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+final class _OnboardingScreenState extends State<OnboardingScreen> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    context.read<OnboardingCubit>().checkOnboardingStatus();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingCubit, OnboardingState>(
+    return BlocConsumer<OnboardingCubit, OnboardingState>(
+      listener: (context, state) {
+        if (state is OnboardingComplete) {
+          context.go(AppRoute.welcome);
+        }
+      },
       builder: (context, state) {
+        final currentPage = switch (state) {
+          OnboardingInProgress(currentPage: final page) => page,
+          _ => 0,
+        };
+
         return switch (state) {
-          OnboardingInProgress(currentPage: final page) => _buildContent(
-            context,
-            page,
+          OnboardingInProgress() => _buildContent(context, currentPage),
+          OnboardingError(messageKey: final key) => Scaffold(
+            body: SafeArea(
+              child: ErrorStateWidget(
+                messageKey: key,
+                onRetry: () =>
+                    context.read<OnboardingCubit>().completeOnboarding(),
+              ),
+            ),
           ),
-          _ => const SizedBox.shrink(),
+          OnboardingComplete() ||
+          OnboardingInitial() => const SizedBox.shrink(),
         };
       },
     );
@@ -33,100 +69,74 @@ final class OnboardingScreen extends StatelessWidget {
 
   Widget _buildContent(BuildContext context, int page) {
     final t = context.t.onboarding;
+    final isLastPage = page >= OnboardingCubit.totalPages - 1;
+    final padding = MediaQuery.of(context).padding;
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Spacing.lg),
-          child: Column(
+      body: Stack(
+        children: [
+          Column(
             children: [
-              Align(
-                alignment: Alignment.topRight,
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: OnboardingCubit.totalPages,
+                  onPageChanged: (index) {
+                    context.read<OnboardingCubit>().setPage(index);
+                  },
+                  itemBuilder: (_, index) => OnboardingSlide(page: index),
+                ),
+              ),
+              OnboardingPageIndicator(
+                currentPage: page,
+                totalPages: OnboardingCubit.totalPages,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Spacing.lg,
+                  Spacing.lg,
+                  Spacing.lg,
+                  Spacing.xl,
+                ),
+                child: AppButton(
+                  label: isLastPage ? t.getStarted : t.next,
+                  onTap: () {
+                    if (!isLastPage) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeInOut,
+                      );
+                      context.read<OnboardingCubit>().nextPage();
+                    } else {
+                      context.read<OnboardingCubit>().completeOnboarding();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: padding.top + Spacing.sm,
+            right: 0,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isLastPage ? 0.0 : 1.0,
+              child: IgnorePointer(
+                ignoring: isLastPage,
                 child: TextButton(
                   onPressed: () =>
                       context.read<OnboardingCubit>().completeOnboarding(),
-                  child: Text(t.skip),
+                  child: Text(
+                    t.skip,
+                    style: context.textTheme.labelLarge?.copyWith(
+                      color: context.colorScheme.onSurface,
+                    ),
+                  ),
                 ),
               ),
-              const Spacer(flex: 2),
-              Icon(
-                _slideIcons[page] ?? Icons.circle,
-                size: 120,
-                color: context.colorScheme.primary,
-              ),
-              const SizedBox(height: Spacing.xl),
-              Text(
-                _slideTitle(t, page),
-                style: context.textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: Spacing.md),
-              Text(
-                _slideDescription(t, page),
-                style: context.textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const Spacer(flex: 2),
-              _PageIndicator(currentPage: page),
-              const SizedBox(height: Spacing.xl),
-              AppButton(
-                label: page < 2 ? t.next : t.getStarted,
-                onTap: () {
-                  if (page < 2) {
-                    context.read<OnboardingCubit>().nextPage();
-                  } else {
-                    context
-                        .read<OnboardingCubit>()
-                        .completeOnboarding();
-                  }
-                },
-              ),
-              const SizedBox(height: Spacing.lg),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  String _slideTitle(covariant dynamic t, int page) {
-    return switch (page) {
-      0 => t.slide1.title as String,
-      1 => t.slide2.title as String,
-      _ => t.slide3.title as String,
-    };
-  }
-
-  String _slideDescription(covariant dynamic t, int page) {
-    return switch (page) {
-      0 => t.slide1.description as String,
-      1 => t.slide2.description as String,
-      _ => t.slide3.description as String,
-    };
-  }
-}
-
-final class _PageIndicator extends StatelessWidget {
-  const _PageIndicator({required this.currentPage});
-
-  final int currentPage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        3,
-        (i) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: Spacing.xs),
-          width: i == currentPage ? 24 : 8,
-          height: 8,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: i == currentPage
-                ? context.colorScheme.primary
-                : context.colorScheme.outline,
-          ),
-        ),
+        ],
       ),
     );
   }
