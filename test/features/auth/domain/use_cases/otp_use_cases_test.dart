@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/core/error/failure_type.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/send_otp.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/verify_otp.dart';
@@ -85,15 +86,16 @@ void main() {
         type: OtpType.email,
       );
       when(() => repository.verifyEmailOtp(params)).thenAnswer(
-        (_) async => const Failure(
-          AuthFailure(messageKey: 'auth.invalidOtp'),
-        ),
+        (_) async => const Failure(InvalidOtp()),
       );
 
       final result = await verifyOtp.email(params);
 
       expect(result, isA<Failure<void>>());
-      expect((result as Failure<void>).failure.messageKey, 'auth.invalidOtp');
+      expect(
+        (result as Failure<void>).failure.type,
+        FailureType.invalidOtp,
+      );
     });
   });
 }

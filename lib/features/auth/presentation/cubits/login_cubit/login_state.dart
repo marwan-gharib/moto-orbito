@@ -19,7 +19,7 @@ final class LoginSuccess extends LoginState {
 }
 
 final class LoginError extends LoginState {
-  const LoginError(this.messageKey);
+  const LoginError(this.message);
 
-  final String messageKey;
+  final String message;
 }

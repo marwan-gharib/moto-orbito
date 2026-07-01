@@ -17,11 +17,10 @@ void main() {
 
     test('Exhaustive switch works correctly', () {
       const ApiResult<int> result = Success(42);
-      final value = switch (result) {
-        Success(data: final data) => data,
-        Failure() => 0,
-      };
-      expect(value, 42);
+      result.fold(
+        onFailure: (failure) => fail('Expected Success, got Failure'),
+        onSuccess: (data) => expect(data, 42),
+      );
     });
   });
 }

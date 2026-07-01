@@ -5,12 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/core/i18n/strings.g.dart';
 import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/features/onboarding/domain/use_cases/check_onboarding_complete.dart';
 import 'package:moto_orbito/features/onboarding/domain/use_cases/mark_onboarding_complete.dart';
-import 'package:moto_orbito/features/onboarding/presentation/cubit/onboarding_cubit.dart';
-import 'package:moto_orbito/features/onboarding/presentation/cubit/onboarding_state.dart';
+import 'package:moto_orbito/features/onboarding/presentation/cubits/onboarding_cubit/onboarding_cubit.dart';
+import 'package:moto_orbito/features/onboarding/presentation/cubits/onboarding_cubit/onboarding_state.dart';
 import 'package:moto_orbito/features/onboarding/presentation/screens/onboarding_screen.dart';
 
 class MockCheckOnboardingComplete extends Mock
@@ -19,20 +20,23 @@ class MockCheckOnboardingComplete extends Mock
 class MockMarkOnboardingComplete extends Mock
     implements MarkOnboardingComplete {}
 
+class MockFailureMessageResolver extends Mock
+    implements FailureMessageResolver {}
+
 Widget createTestWidget(OnboardingCubit cubit) {
   final router = GoRouter(
     initialLocation: AppRoute.onboarding,
     routes: [
       GoRoute(
         path: AppRoute.onboarding,
-        builder: (_, __) => BlocProvider<OnboardingCubit>.value(
+        builder: (_, _) => BlocProvider<OnboardingCubit>.value(
           value: cubit,
-          child: const OnboardingScreen(),
+          child: OnboardingScreen(onOnboardingComplete: () {}),
         ),
       ),
       GoRoute(
         path: AppRoute.welcome,
-        builder: (_, __) => const SizedBox.shrink(),
+        builder: (_, _) => const SizedBox.shrink(),
       ),
     ],
   );
@@ -42,13 +46,19 @@ Widget createTestWidget(OnboardingCubit cubit) {
 void main() {
   late CheckOnboardingComplete checkUseCase;
   late MarkOnboardingComplete markUseCase;
+  late FailureMessageResolver messageResolver;
   late OnboardingCubit cubit;
+
+  setUpAll(() {
+    registerFallbackValue(const NetworkFailure());
+  });
 
   setUp(() {
     LocaleSettings.setLocaleSync(AppLocale.ar);
     checkUseCase = MockCheckOnboardingComplete();
     markUseCase = MockMarkOnboardingComplete();
-    cubit = OnboardingCubit(checkUseCase, markUseCase);
+    messageResolver = MockFailureMessageResolver();
+    cubit = OnboardingCubit(checkUseCase, markUseCase, messageResolver);
   });
 
   tearDown(() {
@@ -83,8 +93,10 @@ void main() {
 
   testWidgets('shows error state when mark onboarding fails', (tester) async {
     when(() => checkUseCase()).thenAnswer((_) async => const Success(false));
-    when(() => markUseCase())
-        .thenAnswer((_) async => const Failure(NetworkFailure()));
+    when(
+      () => markUseCase(),
+    ).thenAnswer((_) async => const Failure(NetworkFailure()));
+    when(() => messageResolver.resolve(any())).thenReturn('Error message');
 
     cubit.emit(const OnboardingInProgress(currentPage: 0));
     await tester.pumpWidget(createTestWidget(cubit));
@@ -96,11 +108,14 @@ void main() {
     expect(find.text('إعادة المحاولة'), findsOneWidget);
   });
 
-  testWidgets('retry button retries complete onboarding on error',
-      (tester) async {
+  testWidgets('retry button retries complete onboarding on error', (
+    tester,
+  ) async {
     when(() => checkUseCase()).thenAnswer((_) async => const Success(false));
-    when(() => markUseCase())
-        .thenAnswer((_) async => const Failure(NetworkFailure()));
+    when(
+      () => markUseCase(),
+    ).thenAnswer((_) async => const Failure(NetworkFailure()));
+    when(() => messageResolver.resolve(any())).thenReturn('Error message');
 
     cubit.emit(const OnboardingInProgress(currentPage: 0));
     await tester.pumpWidget(createTestWidget(cubit));

@@ -23,7 +23,7 @@ final class AuthUnauthenticated extends AuthState {
 }
 
 final class AuthError extends AuthState {
-  const AuthError(this.messageKey);
+  const AuthError(this.message);
 
-  final String messageKey;
+  final String message;
 }

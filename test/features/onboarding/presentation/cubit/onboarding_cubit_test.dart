@@ -2,10 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/features/onboarding/domain/use_cases/check_onboarding_complete.dart';
 import 'package:moto_orbito/features/onboarding/domain/use_cases/mark_onboarding_complete.dart';
-import 'package:moto_orbito/features/onboarding/presentation/cubit/onboarding_cubit.dart';
-import 'package:moto_orbito/features/onboarding/presentation/cubit/onboarding_state.dart';
+import 'package:moto_orbito/features/onboarding/presentation/cubits/onboarding_cubit/onboarding_cubit.dart';
+import 'package:moto_orbito/features/onboarding/presentation/cubits/onboarding_cubit/onboarding_state.dart';
 
 class MockCheckOnboardingComplete extends Mock
     implements CheckOnboardingComplete {}
@@ -13,15 +14,24 @@ class MockCheckOnboardingComplete extends Mock
 class MockMarkOnboardingComplete extends Mock
     implements MarkOnboardingComplete {}
 
+class MockFailureMessageResolver extends Mock
+    implements FailureMessageResolver {}
+
 void main() {
   late CheckOnboardingComplete checkUseCase;
   late MarkOnboardingComplete markUseCase;
+  late FailureMessageResolver messageResolver;
   late OnboardingCubit cubit;
+
+  setUpAll(() {
+    registerFallbackValue(const NetworkFailure());
+  });
 
   setUp(() {
     checkUseCase = MockCheckOnboardingComplete();
     markUseCase = MockMarkOnboardingComplete();
-    cubit = OnboardingCubit(checkUseCase, markUseCase);
+    messageResolver = MockFailureMessageResolver();
+    cubit = OnboardingCubit(checkUseCase, markUseCase, messageResolver);
   });
 
   tearDown(() {
@@ -134,6 +144,7 @@ void main() {
     test('emits loading then error on failure', () async {
       when(() => markUseCase())
           .thenAnswer((_) async => const Failure(NetworkFailure()));
+      when(() => messageResolver.resolve(any())).thenReturn('Error message');
 
       await cubit.completeOnboarding();
 

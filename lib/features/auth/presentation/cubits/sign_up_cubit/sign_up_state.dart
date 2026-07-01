@@ -1,4 +1,4 @@
-import '../../domain/entities/user_entity.dart';
+import '../../../domain/entities/user_entity.dart';
 
 sealed class SignUpState {
   const SignUpState();
@@ -19,7 +19,7 @@ final class SignUpSuccess extends SignUpState {
 }
 
 final class SignUpError extends SignUpState {
-  const SignUpError(this.messageKey);
+  const SignUpError(this.message);
 
-  final String messageKey;
+  final String message;
 }

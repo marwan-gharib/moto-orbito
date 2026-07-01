@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/core/theme/app_colors_extension.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
-import 'package:moto_orbito/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:moto_orbito/features/auth/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:moto_orbito/features/auth/presentation/screens/welcome_screen.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
+
+class MockFailureMessageResolver extends Mock
+    implements FailureMessageResolver {}
 
 Widget _createTestApp(Widget child) {
   const colorsExt = AppColorsExtension(
@@ -37,11 +41,13 @@ Widget _createTestApp(Widget child) {
 
 void main() {
   late AuthRepository repository;
+  late FailureMessageResolver messageResolver;
   late AuthCubit authCubit;
 
   setUp(() {
     repository = MockAuthRepository();
-    authCubit = AuthCubit(repository);
+    messageResolver = MockFailureMessageResolver();
+    authCubit = AuthCubit(repository, messageResolver);
   });
 
   tearDown(() {

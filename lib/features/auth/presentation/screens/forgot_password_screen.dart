@@ -5,8 +5,8 @@ import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 import 'package:moto_orbito/core/widgets/app_text_field.dart';
 
-import '../cubit/forgot_password_cubit.dart';
-import '../cubit/forgot_password_state.dart';
+import '../cubits/forgot_password_cubit/forgot_password_cubit.dart';
+import '../cubits/forgot_password_cubit/forgot_password_state.dart';
 
 final class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -100,7 +100,7 @@ final class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 _ => false,
               };
               final errorMessage = switch (state) {
-                ForgotPasswordError(messageKey: final msg) => msg,
+                ForgotPasswordError(message: final msg) => msg,
                 _ => null,
               };
               return Column(

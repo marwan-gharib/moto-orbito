@@ -1,5 +1,4 @@
 import 'package:moto_orbito/core/constants/supabase_keys.dart';
-import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
 
 final class AuthUserModel {
   const AuthUserModel({
@@ -54,20 +53,5 @@ final class AuthUserModel {
       SupabaseKeys.createdAt: createdAt,
       SupabaseKeys.profilePicture: profilePicture,
     };
-  }
-
-  UserEntity toEntity() {
-    return UserEntity(
-      id: id,
-      email: email,
-      fullName: fullName,
-      phone: phone,
-      isEmailVerified: emailConfirmedAt != null,
-      isPhoneVerified: phoneVerifiedAt != null,
-      fcmToken: fcmToken,
-      locale: locale,
-      createdAt: DateTime.parse(createdAt),
-      profilePicture: profilePicture,
-    );
   }
 }

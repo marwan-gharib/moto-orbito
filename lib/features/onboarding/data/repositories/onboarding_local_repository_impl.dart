@@ -17,7 +17,7 @@ final class OnboardingLocalRepositoryImpl implements OnboardingLocalRepository {
       final cachedValue = _cacheService.get(_onboardingCacheKey);
       return Success(cachedValue == true);
     } on Object {
-      return const Failure(CacheFailure());
+      return const Failure(StorageFailure());
     }
   }
 
@@ -27,7 +27,7 @@ final class OnboardingLocalRepositoryImpl implements OnboardingLocalRepository {
       await _cacheService.setData(key: _onboardingCacheKey, value: true);
       return const Success(null);
     } on Object {
-      return const Failure(CacheFailure());
+      return const Failure(StorageFailure());
     }
   }
 }

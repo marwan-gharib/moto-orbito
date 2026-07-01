@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:moto_orbito/core/constants/app_failure_keys.dart';
 import 'package:moto_orbito/core/constants/app_constants.dart';
 import 'package:moto_orbito/core/constants/app_links.dart';
 import 'package:moto_orbito/core/constants/supabase_keys.dart';
@@ -13,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../mappers/auth_user_mapper.dart';
 import '../models/auth_user_model.dart';
 
 final class AuthRepositoryImpl implements AuthRepository {
@@ -53,12 +53,11 @@ final class AuthRepositoryImpl implements AuthRepository {
           path: '${user.id}/${params.profilePicturePath!}',
           bytes: params.profilePictureBytes!,
         );
-        switch (uploadResult) {
-          case Success(data: final url):
-            profilePictureUrl = url;
-          case Failure():
-            break;
-        }
+
+        uploadResult.fold(
+          onFailure: (f) => null,
+          onSuccess: (url) => profilePictureUrl = url,
+        );
       }
 
       final model = AuthUserModel(
@@ -79,14 +78,12 @@ final class AuthRepositoryImpl implements AuthRepository {
             .eq(SupabaseKeys.id, user.id);
       }
 
-      return Success(model.toEntity());
+      return Success(AuthUserMapper.toEntity(model));
     } on supabase.AuthException catch (e) {
       return Failure(
-        AuthFailure(
-          messageKey: e.message.contains('already registered')
-              ? AppFailureKeys.emailAlreadyExists
-              : AppFailureKeys.auth,
-        ),
+        e.message.contains('already registered')
+            ? const EmailAlreadyExists()
+            : const AuthFailure(),
       );
     } on DioException catch (e) {
       return Failure(FailureMapper.fromDioException(e));
@@ -110,7 +107,7 @@ final class AuthRepositoryImpl implements AuthRepository {
       }
       if (user.emailConfirmedAt == null) {
         await _client.auth.signOut();
-        return const Failure(AuthFailure(messageKey: AppFailureKeys.emailNotVerified));
+        return const Failure(EmailNotVerified());
       }
       final raw = await _client
           .from(SupabaseKeys.users)
@@ -120,14 +117,12 @@ final class AuthRepositoryImpl implements AuthRepository {
       final json = Map<String, dynamic>.from(raw as Map);
       json[SupabaseKeys.emailConfirmedAt] = user.emailConfirmedAt;
       final model = AuthUserModel.fromJson(json);
-      return Success(model.toEntity());
+      return Success(AuthUserMapper.toEntity(model));
     } on supabase.AuthException catch (e) {
       return Failure(
-        AuthFailure(
-          messageKey: e.message.contains('Invalid login credentials')
-              ? AppFailureKeys.invalidCredentials
-              : AppFailureKeys.auth,
-        ),
+        e.message.contains('Invalid login credentials')
+            ? const InvalidCredentials()
+            : const AuthFailure(),
       );
     } on DioException catch (e) {
       return Failure(FailureMapper.fromDioException(e));
@@ -163,9 +158,9 @@ final class AuthRepositoryImpl implements AuthRepository {
         createdAt: sessionUser.createdAt,
         profilePicture: profilePic,
       );
-      return Success(model.toEntity().copyWith(isFirstTimeUser: isFirst));
+      return Success(AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst));
     } on supabase.AuthException catch (e) {
-      return Failure(AuthFailure(messageKey: e.message));
+      return Failure(FailureMapper.fromObject(e));
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
@@ -198,9 +193,9 @@ final class AuthRepositoryImpl implements AuthRepository {
         createdAt: sessionUser.createdAt,
         profilePicture: profilePic,
       );
-      return Success(model.toEntity().copyWith(isFirstTimeUser: isFirst));
+      return Success(AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst));
     } on supabase.AuthException catch (e) {
-      return Failure(AuthFailure(messageKey: e.message));
+      return Failure(FailureMapper.fromObject(e));
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
@@ -211,8 +206,8 @@ final class AuthRepositoryImpl implements AuthRepository {
     try {
       await _client.auth.signInWithOtp(email: params.email);
       return const Success(null);
-    } on supabase.AuthException catch (e) {
-      return Failure(AuthFailure(messageKey: e.message));
+    } on supabase.AuthException {
+      return const Failure(AuthFailure());
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
@@ -229,11 +224,9 @@ final class AuthRepositoryImpl implements AuthRepository {
       return const Success(null);
     } on supabase.AuthException catch (e) {
       return Failure(
-        AuthFailure(
-          messageKey: e.message.contains('expired')
-              ? AppFailureKeys.otpExpired
-              : AppFailureKeys.invalidOtp,
-        ),
+        e.message.contains('expired')
+            ? const OtpExpired()
+            : const InvalidOtp(),
       );
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
@@ -245,8 +238,8 @@ final class AuthRepositoryImpl implements AuthRepository {
     try {
       await _client.auth.signInWithOtp(phone: params.phone);
       return const Success(null);
-    } on supabase.AuthException catch (e) {
-      return Failure(AuthFailure(messageKey: e.message));
+    } on supabase.AuthException {
+      return const Failure(AuthFailure());
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
@@ -263,11 +256,9 @@ final class AuthRepositoryImpl implements AuthRepository {
       return const Success(null);
     } on supabase.AuthException catch (e) {
       return Failure(
-        AuthFailure(
-          messageKey: e.message.contains('expired')
-              ? AppFailureKeys.otpExpired
-              : AppFailureKeys.invalidOtp,
-        ),
+        e.message.contains('expired')
+            ? const OtpExpired()
+            : const InvalidOtp(),
       );
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
@@ -331,7 +322,7 @@ final class AuthRepositoryImpl implements AuthRepository {
       final json = Map<String, dynamic>.from(raw as Map);
       json[SupabaseKeys.emailConfirmedAt] = sessionUser.emailConfirmedAt;
       final model = AuthUserModel.fromJson(json);
-      return Success(model.toEntity());
+      return Success(AuthUserMapper.toEntity(model));
     } on supabase.AuthException {
       return const Success(null);
     } on Object catch (e) {

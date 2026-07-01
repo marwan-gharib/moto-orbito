@@ -17,7 +17,7 @@ final class OnboardingComplete extends OnboardingState {
 }
 
 final class OnboardingError extends OnboardingState {
-  const OnboardingError(this.messageKey);
+  const OnboardingError(this.message);
 
-  final String messageKey;
+  final String message;
 }

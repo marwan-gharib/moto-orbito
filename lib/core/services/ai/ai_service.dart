@@ -34,12 +34,11 @@ final class AiService {
             )
             .timeout(_timeout);
 
-        switch (result) {
-          case Success<Map<String, dynamic>>():
-            return result;
-          case Failure<Map<String, dynamic>>():
-            if (attempt == _maxRetries) return result;
-        }
+        final shouldReturn = result.fold(
+          onFailure: (_) => attempt == _maxRetries,
+          onSuccess: (_) => true,
+        );
+        if (shouldReturn) return result;
       } on TimeoutException {
         return const Failure(NetworkFailure());
       }

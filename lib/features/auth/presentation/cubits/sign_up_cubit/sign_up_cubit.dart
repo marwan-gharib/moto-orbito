@@ -1,16 +1,17 @@
 import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moto_orbito/core/error/api_result.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 
-import '../../domain/repositories/auth_repository.dart';
-import '../../domain/use_cases/sign_up.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../../domain/use_cases/sign_up.dart';
 import 'sign_up_state.dart';
 
 final class SignUpCubit extends Cubit<SignUpState> {
-  SignUpCubit(this._signUp) : super(const SignUpInitial());
+  SignUpCubit(this._signUp, this._messageResolver) : super(const SignUpInitial());
 
   final SignUp _signUp;
+  final FailureMessageResolver _messageResolver;
 
   Future<void> signUp({
     required String email,
@@ -28,11 +29,9 @@ final class SignUpCubit extends Cubit<SignUpState> {
       profilePictureBytes: profilePictureBytes,
     );
     final result = await _signUp(params);
-    switch (result) {
-      case Success(data: final user):
-        emit(SignUpSuccess(user: user));
-      case Failure(failure: final f):
-        emit(SignUpError(f.messageKey));
-    }
+    result.fold(
+      onFailure: (f) => emit(SignUpError(_messageResolver.resolve(f))),
+      onSuccess: (user) => emit(SignUpSuccess(user: user)),
+    );
   }
 }

@@ -13,7 +13,7 @@ class FlutterSecureStorageClient implements SecureStorageClient {
     try {
       await _storage.write(key: key, value: value);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -22,7 +22,7 @@ class FlutterSecureStorageClient implements SecureStorageClient {
     try {
       return await _storage.read(key: key);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -31,7 +31,7 @@ class FlutterSecureStorageClient implements SecureStorageClient {
     try {
       await _storage.delete(key: key);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 

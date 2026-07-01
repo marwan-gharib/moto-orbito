@@ -6,12 +6,12 @@ import 'app_button.dart';
 
 final class ErrorStateWidget extends StatelessWidget {
   const ErrorStateWidget({
-    required this.messageKey,
+    required this.message,
     required this.onRetry,
     super.key,
   });
 
-  final String messageKey;
+  final String message;
   final VoidCallback onRetry;
 
   @override
@@ -29,7 +29,7 @@ final class ErrorStateWidget extends StatelessWidget {
             ),
             const SizedBox(height: Spacing.md),
             Text(
-              context.t[messageKey],
+              message,
               textAlign: TextAlign.center,
               style: context.textTheme.bodyLarge,
             ),

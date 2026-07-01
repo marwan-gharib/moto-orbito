@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
-import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 import 'package:moto_orbito/core/widgets/error_state_widget.dart';
 
-import '../cubit/onboarding_cubit.dart';
-import '../cubit/onboarding_state.dart';
+import '../cubits/onboarding_cubit/onboarding_cubit.dart';
+import '../cubits/onboarding_cubit/onboarding_state.dart';
 import '../widgets/onboarding_page_indicator.dart';
 import '../widgets/onboarding_slide.dart';
 
 final class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({required this.onOnboardingComplete, super.key});
+
+  final VoidCallback onOnboardingComplete;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -40,7 +40,7 @@ final class _OnboardingScreenState extends State<OnboardingScreen> {
     return BlocConsumer<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
         if (state is OnboardingComplete) {
-          context.go(AppRoute.welcome);
+          widget.onOnboardingComplete();
         }
       },
       builder: (context, state) {
@@ -51,10 +51,10 @@ final class _OnboardingScreenState extends State<OnboardingScreen> {
 
         return switch (state) {
           OnboardingInProgress() => _buildContent(context, currentPage),
-          OnboardingError(messageKey: final key) => Scaffold(
+          OnboardingError(message: final key) => Scaffold(
             body: SafeArea(
               child: ErrorStateWidget(
-                messageKey: key,
+                message: key,
                 onRetry: () =>
                     context.read<OnboardingCubit>().completeOnboarding(),
               ),

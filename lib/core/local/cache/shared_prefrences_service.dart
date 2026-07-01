@@ -19,10 +19,10 @@ class SharedPreferencesService extends CacheService {
       } else if (value is double) {
         return await _prefs.setDouble(key, value);
       } else {
-        throw CacheFailure();
+        throw StorageFailure();
       }
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -31,7 +31,7 @@ class SharedPreferencesService extends CacheService {
     try {
       return _prefs.get(key);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -40,7 +40,7 @@ class SharedPreferencesService extends CacheService {
     try {
       return _prefs.containsKey(key);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -49,7 +49,7 @@ class SharedPreferencesService extends CacheService {
     try {
       return _prefs.remove(key);
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 
@@ -58,7 +58,7 @@ class SharedPreferencesService extends CacheService {
     try {
       return _prefs.clear();
     } catch (e) {
-      throw CacheFailure();
+      throw StorageFailure();
     }
   }
 }

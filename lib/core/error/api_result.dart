@@ -4,8 +4,8 @@ sealed class ApiResult<T> {
   const ApiResult();
 
   R fold<R>({
-    required R Function(AppFailure) onFailure,
-    required R Function(T) onSuccess,
+    required R Function(AppFailure failure) onFailure,
+    required R Function(T data) onSuccess,
   }) {
     switch (this) {
       case Success(data: final data):

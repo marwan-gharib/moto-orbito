@@ -3,8 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
+import 'package:moto_orbito/core/error/failure_type.dart';
+import 'package:moto_orbito/core/error/strategies/strategies.dart';
 import 'package:moto_orbito/core/network/dio_client.dart';
-import 'package:moto_orbito/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:moto_orbito/features/auth/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../local/cache/cache_service.dart';
@@ -61,6 +64,9 @@ void registerCoreModule({required String baseUrl}) {
   // if (!sl.isRegistered<AiService>()) {
   //   sl.registerLazySingleton<AiService>(() => AiService(sl()));
   // }
+
+  registerFailureModule();
+
   if (!sl.isRegistered<DeepLinkIntentStore>()) {
     sl.registerLazySingleton<DeepLinkIntentStore>(
       () => DeepLinkIntentStore(sl()),
@@ -94,4 +100,50 @@ void registerCoreModule({required String baseUrl}) {
   //     ),
   //   );
   // }
+}
+
+void registerFailureModule() {
+  final sl = GetIt.instance;
+
+  if (!sl.isRegistered<NetworkFailureStrategy>()) {
+    sl.registerLazySingleton<NetworkFailureStrategy>(NetworkFailureStrategy.new);
+  }
+  if (!sl.isRegistered<ServerFailureStrategy>()) {
+    sl.registerLazySingleton<ServerFailureStrategy>(ServerFailureStrategy.new);
+  }
+  if (!sl.isRegistered<AuthFailureStrategy>()) {
+    sl.registerLazySingleton<AuthFailureStrategy>(AuthFailureStrategy.new);
+  }
+  if (!sl.isRegistered<NotFoundFailureStrategy>()) {
+    sl.registerLazySingleton<NotFoundFailureStrategy>(NotFoundFailureStrategy.new);
+  }
+  if (!sl.isRegistered<PermissionFailureStrategy>()) {
+    sl.registerLazySingleton<PermissionFailureStrategy>(PermissionFailureStrategy.new);
+  }
+  if (!sl.isRegistered<StorageFailureStrategy>()) {
+    sl.registerLazySingleton<StorageFailureStrategy>(StorageFailureStrategy.new);
+  }
+  if (!sl.isRegistered<UnexpectedFailureStrategy>()) {
+    sl.registerLazySingleton<UnexpectedFailureStrategy>(UnexpectedFailureStrategy.new);
+  }
+
+  if (!sl.isRegistered<FailureMessageResolver>()) {
+    final authStrategy = sl<AuthFailureStrategy>();
+    sl.registerLazySingleton<FailureMessageResolver>(
+      () => FailureMessageResolver({
+        FailureType.network: sl<NetworkFailureStrategy>(),
+        FailureType.server: sl<ServerFailureStrategy>(),
+        FailureType.notFound: sl<NotFoundFailureStrategy>(),
+        FailureType.permission: sl<PermissionFailureStrategy>(),
+        FailureType.storage: sl<StorageFailureStrategy>(),
+        FailureType.unexpected: sl<UnexpectedFailureStrategy>(),
+        FailureType.auth: authStrategy,
+        FailureType.emailAlreadyExists: authStrategy,
+        FailureType.emailNotVerified: authStrategy,
+        FailureType.invalidCredentials: authStrategy,
+        FailureType.otpExpired: authStrategy,
+        FailureType.invalidOtp: authStrategy,
+      }),
+    );
+  }
 }

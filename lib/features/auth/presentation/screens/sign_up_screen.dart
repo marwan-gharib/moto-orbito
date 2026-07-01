@@ -8,9 +8,9 @@ import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
-import '../cubit/auth_cubit.dart';
-import '../cubit/sign_up_cubit.dart';
-import '../cubit/sign_up_state.dart';
+import '../cubits/auth_cubit/auth_cubit.dart';
+import '../cubits/sign_up_cubit/sign_up_cubit.dart';
+import '../cubits/sign_up_cubit/sign_up_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/profile_image_picker.dart';
 
@@ -60,7 +60,7 @@ final class _SignUpScreenState extends State<SignUpScreen> {
         final isLoading =
             switch (state) { SignUpLoading() => true, _ => false };
         final errorMessage = switch (state) {
-          SignUpError(messageKey: final msg) => msg,
+          SignUpError(message: final msg) => msg,
           _ => null,
         };
 

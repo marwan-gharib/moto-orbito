@@ -15,7 +15,7 @@ final class ForgotPasswordSent extends ForgotPasswordState {
 }
 
 final class ForgotPasswordError extends ForgotPasswordState {
-  const ForgotPasswordError(this.messageKey);
+  const ForgotPasswordError(this.message);
 
-  final String messageKey;
+  final String message;
 }

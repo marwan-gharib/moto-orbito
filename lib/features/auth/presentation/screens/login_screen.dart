@@ -6,9 +6,9 @@ import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
-import '../cubit/auth_cubit.dart';
-import '../cubit/login_cubit.dart';
-import '../cubit/login_state.dart';
+import '../cubits/auth_cubit/auth_cubit.dart';
+import '../cubits/login_cubit/login_cubit.dart';
+import '../cubits/login_cubit/login_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_auth_button.dart';
 
@@ -47,9 +47,12 @@ final class _LoginScreenState extends State<LoginScreen> {
         }
       },
       builder: (context, state) {
-        final isLoading = switch (state) { LoginLoading() => true, _ => false };
+        final isLoading = switch (state) {
+          LoginLoading() => true,
+          _ => false,
+        };
         final errorMessage = switch (state) {
-          LoginError(messageKey: final msg) => msg,
+          LoginError(message: final msg) => msg,
           _ => null,
         };
 
@@ -135,10 +138,9 @@ final class _LoginScreenState extends State<LoginScreen> {
                         controller: _emailCtrl,
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
-                        validator: (v) =>
-                            v == null || !v.contains('@')
-                                ? t.errors.fieldRequired
-                                : null,
+                        validator: (v) => v == null || !v.contains('@')
+                            ? t.errors.fieldRequired
+                            : null,
                       ),
                       const SizedBox(height: Spacing.md),
                       AuthTextField(
@@ -147,16 +149,16 @@ final class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordCtrl,
                         icon: Icons.lock_outlined,
                         obscureText: true,
-                        validator: (v) =>
-                            v == null || v.isEmpty
-                                ? t.errors.fieldRequired
-                                : null,
+                        validator: (v) => v == null || v.isEmpty
+                            ? t.errors.fieldRequired
+                            : null,
                       ),
                       const SizedBox(height: Spacing.sm),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () => context.push(AppRoute.forgotPassword),
+                          onPressed: () =>
+                              context.push(AppRoute.forgotPassword),
                           child: Text(
                             t.auth.login.forgotPassword,
                             style: context.textTheme.bodyMedium?.copyWith(
@@ -189,9 +191,9 @@ final class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           if (_formKey.currentState?.validate() == true) {
                             context.read<LoginCubit>().login(
-                                  email: _emailCtrl.text.trim(),
-                                  password: _passwordCtrl.text,
-                                );
+                              email: _emailCtrl.text.trim(),
+                              password: _passwordCtrl.text,
+                            );
                           }
                         },
                       ),

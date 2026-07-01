@@ -29,9 +29,9 @@ final class OtpVerified extends OtpState {
 }
 
 final class OtpError extends OtpState {
-  const OtpError(this.messageKey);
+  const OtpError(this.message);
 
-  final String messageKey;
+  final String message;
 }
 
 final class OtpResendExhausted extends OtpState {

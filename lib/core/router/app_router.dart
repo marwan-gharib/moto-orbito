@@ -5,19 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/presentation/cubit/auth_cubit.dart';
-import '../../features/auth/presentation/cubit/auth_state.dart';
-import '../../features/auth/presentation/cubit/forgot_password_cubit.dart';
-import '../../features/auth/presentation/cubit/login_cubit.dart';
-import '../../features/auth/presentation/cubit/otp_cubit.dart';
-import '../../features/auth/presentation/cubit/sign_up_cubit.dart';
+import '../../features/auth/presentation/cubits/auth_cubit/auth_cubit.dart';
+import '../../features/auth/presentation/cubits/auth_cubit/auth_state.dart';
+import '../../features/auth/presentation/cubits/forgot_password_cubit/forgot_password_cubit.dart';
+import '../../features/auth/presentation/cubits/login_cubit/login_cubit.dart';
+import '../../features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
+import '../../features/auth/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 import '../../features/auth/presentation/screens/email_verification_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/phone_otp_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/auth/presentation/screens/welcome_screen.dart';
-import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import '../../features/onboarding/presentation/cubits/onboarding_cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../widgets/no_internet_screen.dart';
 import 'deep_link_intent.dart';
@@ -59,9 +59,11 @@ final class AppRouter {
         GoRoute(
           path: AppRoute.onboarding,
           name: AppRoute.onboarding,
-          builder: (_, _) => BlocProvider.value(
+          builder: (context, _) => BlocProvider.value(
             value: GetIt.instance<OnboardingCubit>(),
-            child: const OnboardingScreen(),
+            child: OnboardingScreen(
+              onOnboardingComplete: () => context.go(AppRoute.welcome),
+            ),
           ),
         ),
         GoRoute(

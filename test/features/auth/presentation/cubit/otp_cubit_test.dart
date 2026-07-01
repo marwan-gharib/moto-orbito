@@ -2,19 +2,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
+import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/send_otp.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/verify_otp.dart';
-import 'package:moto_orbito/features/auth/presentation/cubit/otp_cubit.dart';
-import 'package:moto_orbito/features/auth/presentation/cubit/otp_state.dart';
+import 'package:moto_orbito/features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
+import 'package:moto_orbito/features/auth/presentation/cubits/otp_cubit/otp_state.dart';
 
 class MockSendOtp extends Mock implements SendOtp {}
 
 class MockVerifyOtp extends Mock implements VerifyOtp {}
 
+class MockFailureMessageResolver extends Mock
+    implements FailureMessageResolver {}
+
 void main() {
   late SendOtp sendOtp;
   late VerifyOtp verifyOtp;
+  late FailureMessageResolver messageResolver;
   late OtpCubit cubit;
 
   setUpAll(() {
@@ -26,12 +31,14 @@ void main() {
         type: OtpType.email,
       ),
     );
+    registerFallbackValue(const NetworkFailure());
   });
 
   setUp(() {
     sendOtp = MockSendOtp();
     verifyOtp = MockVerifyOtp();
-    cubit = OtpCubit(sendOtp, verifyOtp);
+    messageResolver = MockFailureMessageResolver();
+    cubit = OtpCubit(sendOtp, verifyOtp, messageResolver);
   });
 
   tearDown(() {
@@ -61,6 +68,7 @@ void main() {
       when(() => sendOtp.email(any())).thenAnswer(
         (_) async => const Failure(NetworkFailure()),
       );
+      when(() => messageResolver.resolve(any())).thenReturn('Error message');
 
       final expected = [
         const OtpSending(),

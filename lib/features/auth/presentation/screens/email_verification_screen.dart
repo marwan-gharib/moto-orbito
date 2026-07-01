@@ -6,8 +6,8 @@ import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
-import '../cubit/otp_cubit.dart';
-import '../cubit/otp_state.dart';
+import '../cubits/otp_cubit/otp_cubit.dart';
+import '../cubits/otp_cubit/otp_state.dart';
 
 final class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({required this.email, super.key});
@@ -112,7 +112,7 @@ final class _EmailVerificationScreenState
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  OtpError(messageKey: final msg) => Padding(
+                  OtpError(message: final msg) => Padding(
                     padding: const EdgeInsets.only(top: Spacing.md),
                     child: Text(
                       msg,
