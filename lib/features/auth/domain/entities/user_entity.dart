@@ -5,9 +5,8 @@ final class UserEntity extends Equatable {
     required this.id,
     required this.email,
     required this.fullName,
-    this.phone,
+    required this.username,
     this.isEmailVerified = false,
-    this.isPhoneVerified = false,
     this.fcmToken,
     this.locale = 'ar',
     required this.createdAt,
@@ -18,9 +17,8 @@ final class UserEntity extends Equatable {
   final String id;
   final String email;
   final String fullName;
-  final String? phone;
+  final String username;
   final bool isEmailVerified;
-  final bool isPhoneVerified;
   final String? fcmToken;
   final String locale;
   final DateTime createdAt;
@@ -31,9 +29,8 @@ final class UserEntity extends Equatable {
     String? id,
     String? email,
     String? fullName,
-    String? phone,
+    String? username,
     bool? isEmailVerified,
-    bool? isPhoneVerified,
     String? fcmToken,
     String? locale,
     DateTime? createdAt,
@@ -44,9 +41,8 @@ final class UserEntity extends Equatable {
       id: id ?? this.id,
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
-      phone: phone ?? this.phone,
+      username: username ?? this.username,
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
-      isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
       fcmToken: fcmToken ?? this.fcmToken,
       locale: locale ?? this.locale,
       createdAt: createdAt ?? this.createdAt,

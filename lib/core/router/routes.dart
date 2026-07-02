@@ -6,7 +6,6 @@ abstract final class AppRoute {
   static const String signUp = '/sign-up';
   static const String verifyEmail = '/verify-email';
   static const String login = '/login';
-  static const String phoneOtp = '/phone-otp';
   static const String forgotPassword = '/forgot-password';
   static const String profileSetup = '/profile-setup';
   static const String home = '/home';

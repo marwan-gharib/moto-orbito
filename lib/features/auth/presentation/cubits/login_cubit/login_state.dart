@@ -1,4 +1,4 @@
-import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
+import '../../view_models/user_view_model.dart';
 
 sealed class LoginState {
   const LoginState();
@@ -15,7 +15,7 @@ final class LoginLoading extends LoginState {
 final class LoginSuccess extends LoginState {
   const LoginSuccess(this.user);
 
-  final UserEntity user;
+  final UserViewModel user;
 }
 
 final class LoginError extends LoginState {

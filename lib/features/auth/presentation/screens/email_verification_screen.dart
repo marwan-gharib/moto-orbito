@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
-import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
@@ -10,9 +8,14 @@ import '../cubits/otp_cubit/otp_cubit.dart';
 import '../cubits/otp_cubit/otp_state.dart';
 
 final class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({required this.email, super.key});
+  const EmailVerificationScreen({
+    required this.email,
+    super.key,
+    required this.onVerificationSuccess,
+  });
 
   final String email;
+  final VoidCallback onVerificationSuccess;
 
   @override
   State<EmailVerificationScreen> createState() =>
@@ -26,9 +29,6 @@ final class _EmailVerificationScreenState
   @override
   void initState() {
     super.initState();
-    if (widget.email.isNotEmpty) {
-      context.read<OtpCubit>().sendEmailOtp(widget.email);
-    }
   }
 
   @override
@@ -46,7 +46,11 @@ final class _EmailVerificationScreenState
       listener: (context, state) {
         switch (state) {
           case OtpVerified():
-            context.pushReplacement(AppRoute.home);
+            widget.onVerificationSuccess();
+          case OtpError(message: final msg):
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(msg)),
+            );
           default:
             break;
         }
@@ -97,13 +101,18 @@ final class _EmailVerificationScreenState
                   ),
                 const SizedBox(height: Spacing.lg),
                 switch (state) {
+                  OtpInitial() => _buildOtpForm(
+                    context,
+                    t,
+                    resendAttemptsRemaining: 3,
+                  ),
                   OtpSending() => const Center(
                     child: CircularProgressIndicator(),
                   ),
                   OtpSent(resendCountdownSeconds: _, resendAttemptsRemaining: final remaining) => _buildOtpForm(
                     context,
                     t,
-                    remaining,
+                    resendAttemptsRemaining: remaining,
                   ),
                   OtpResendExhausted() => Text(
                     t.maxAttemptsReached,
@@ -112,17 +121,18 @@ final class _EmailVerificationScreenState
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  OtpError(message: final msg) => Padding(
-                    padding: const EdgeInsets.only(top: Spacing.md),
-                    child: Text(
-                      msg,
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.error,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                  OtpVerifying() => const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  _ => const SizedBox.shrink(),
+                  OtpError(message: final msg) => _buildOtpForm(
+                    context,
+                    t,
+                    resendAttemptsRemaining: 3,
+                    errorMessage: msg,
+                  ),
+                  OtpVerified() => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 },
               ],
             ),
@@ -134,9 +144,10 @@ final class _EmailVerificationScreenState
 
   Widget _buildOtpForm(
     BuildContext context,
-    Object t,
-    int resendAttemptsRemaining,
-  ) {
+    Object t, {
+    required int resendAttemptsRemaining,
+    String? errorMessage,
+  }) {
     final colors = context.colorScheme;
     final otpLabel = (t as dynamic).otpLabel as String? ?? 'OTP Code';
     final verifyLabel = (t as dynamic).verify as String? ?? 'Verify';
@@ -160,6 +171,17 @@ final class _EmailVerificationScreenState
             letterSpacing: 8,
           ),
         ),
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: Spacing.sm),
+            child: Text(
+              errorMessage,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: colors.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         const SizedBox(height: Spacing.lg),
         AppButton(
           label: verifyLabel,

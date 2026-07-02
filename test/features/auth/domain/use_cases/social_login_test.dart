@@ -21,6 +21,7 @@ void main() {
     id: 'uid-1',
     email: 'test@gmail.com',
     fullName: 'Test User',
+    username: 'googleuser',
     createdAt: DateTime(2026),
   );
 
@@ -28,6 +29,7 @@ void main() {
     id: 'uid-2',
     email: 'test@fb.com',
     fullName: 'FB User',
+    username: 'fbuser',
     createdAt: DateTime(2026),
   );
 

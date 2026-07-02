@@ -144,6 +144,9 @@ class Translations$auth$ar {
 	/// ar: 'يرجى تأكيد بريدك الإلكتروني أولاً.'
 	String get emailNotVerified => 'يرجى تأكيد بريدك الإلكتروني أولاً.';
 
+	/// ar: 'هذا البريد موجود ولكن لم يتم تأكيده. جارٍ التحويل إلى صفحة التحقق...'
+	String get emailUnverifiedExists => 'هذا البريد موجود ولكن لم يتم تأكيده. جارٍ التحويل إلى صفحة التحقق...';
+
 	/// ar: 'بيانات تسجيل الدخول غير صحيحة.'
 	String get invalidCredentials => 'بيانات تسجيل الدخول غير صحيحة.';
 
@@ -226,17 +229,53 @@ class Translations$auth$signUp$ar {
 	/// ar: 'الاسم الكامل'
 	String get fullName => 'الاسم الكامل';
 
+	/// ar: 'اسم المستخدم'
+	String get username => 'اسم المستخدم';
+
 	/// ar: 'البريد الإلكتروني'
 	String get email => 'البريد الإلكتروني';
+
+	/// ar: 'يرجى إدخال بريد إلكتروني صحيح'
+	String get invalidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
 
 	/// ar: 'كلمة المرور'
 	String get password => 'كلمة المرور';
 
+	/// ar: 'أدخل كلمة المرور'
+	String get passwordHint => 'أدخل كلمة المرور';
+
 	/// ar: 'تأكيد كلمة المرور'
 	String get confirmPassword => 'تأكيد كلمة المرور';
 
+	/// ar: 'أعد إدخال كلمة المرور'
+	String get confirmPasswordHint => 'أعد إدخال كلمة المرور';
+
 	/// ar: 'كلمتا المرور غير متطابقتين'
 	String get passwordMismatch => 'كلمتا المرور غير متطابقتين';
+
+	/// ar: 'حرف كبير واحد على الأقل'
+	String get passwordUppercase => 'حرف كبير واحد على الأقل';
+
+	/// ar: 'حرف صغير واحد على الأقل'
+	String get passwordLowercase => 'حرف صغير واحد على الأقل';
+
+	/// ar: 'رقم واحد على الأقل'
+	String get passwordNumber => 'رقم واحد على الأقل';
+
+	/// ar: '8 أحرف على الأقل'
+	String get passwordMinLength => '8 أحرف على الأقل';
+
+	/// ar: 'رمز خاص واحد على الأقل'
+	String get passwordSpecial => 'رمز خاص واحد على الأقل';
+
+	/// ar: 'كلمة المرور لا تستوفي جميع المتطلبات'
+	String get passwordWeak => 'كلمة المرور لا تستوفي جميع المتطلبات';
+
+	/// ar: 'اسم المستخدم هذا مستخدم بالفعل'
+	String get usernameTaken => 'اسم المستخدم هذا مستخدم بالفعل';
+
+	/// ar: 'يرجى الانتظار أثناء التحقق من اسم المستخدم'
+	String get usernameCheckPending => 'يرجى الانتظار أثناء التحقق من اسم المستخدم';
 
 	/// ar: 'رقم الهاتف'
 	String get phone => 'رقم الهاتف';
@@ -267,6 +306,9 @@ class Translations$auth$login$ar {
 
 	/// ar: 'كلمة المرور'
 	String get password => 'كلمة المرور';
+
+	/// ar: 'أدخل كلمة المرور'
+	String get passwordHint => 'أدخل كلمة المرور';
 
 	/// ar: 'تسجيل الدخول'
 	String get submit => 'تسجيل الدخول';
@@ -501,6 +543,7 @@ extension on Translations {
 			'errors.cache' => 'حدث خطأ أثناء الوصول إلى ذاكرة التخزين المؤقت.',
 			'auth.emailAlreadyExists' => 'البريد الإلكتروني مسجل بالفعل.',
 			'auth.emailNotVerified' => 'يرجى تأكيد بريدك الإلكتروني أولاً.',
+			'auth.emailUnverifiedExists' => 'هذا البريد موجود ولكن لم يتم تأكيده. جارٍ التحويل إلى صفحة التحقق...',
 			'auth.invalidCredentials' => 'بيانات تسجيل الدخول غير صحيحة.',
 			'auth.invalidOtp' => 'رمز التحقق غير صحيح.',
 			'auth.otpExpired' => 'انتهت صلاحية رمز التحقق.',
@@ -512,10 +555,22 @@ extension on Translations {
 			'auth.deleteAccount.cancel' => 'إلغاء',
 			'auth.signUp.title' => 'إنشاء حساب',
 			'auth.signUp.fullName' => 'الاسم الكامل',
+			'auth.signUp.username' => 'اسم المستخدم',
 			'auth.signUp.email' => 'البريد الإلكتروني',
+			'auth.signUp.invalidEmail' => 'يرجى إدخال بريد إلكتروني صحيح',
 			'auth.signUp.password' => 'كلمة المرور',
+			'auth.signUp.passwordHint' => 'أدخل كلمة المرور',
 			'auth.signUp.confirmPassword' => 'تأكيد كلمة المرور',
+			'auth.signUp.confirmPasswordHint' => 'أعد إدخال كلمة المرور',
 			'auth.signUp.passwordMismatch' => 'كلمتا المرور غير متطابقتين',
+			'auth.signUp.passwordUppercase' => 'حرف كبير واحد على الأقل',
+			'auth.signUp.passwordLowercase' => 'حرف صغير واحد على الأقل',
+			'auth.signUp.passwordNumber' => 'رقم واحد على الأقل',
+			'auth.signUp.passwordMinLength' => '8 أحرف على الأقل',
+			'auth.signUp.passwordSpecial' => 'رمز خاص واحد على الأقل',
+			'auth.signUp.passwordWeak' => 'كلمة المرور لا تستوفي جميع المتطلبات',
+			'auth.signUp.usernameTaken' => 'اسم المستخدم هذا مستخدم بالفعل',
+			'auth.signUp.usernameCheckPending' => 'يرجى الانتظار أثناء التحقق من اسم المستخدم',
 			'auth.signUp.phone' => 'رقم الهاتف',
 			'auth.signUp.submit' => 'إنشاء حساب',
 			'auth.signUp.success' => 'تم إنشاء الحساب بنجاح',
@@ -523,6 +578,7 @@ extension on Translations {
 			'auth.login.title' => 'تسجيل الدخول',
 			'auth.login.email' => 'البريد الإلكتروني',
 			'auth.login.password' => 'كلمة المرور',
+			'auth.login.passwordHint' => 'أدخل كلمة المرور',
 			'auth.login.submit' => 'تسجيل الدخول',
 			'auth.login.forgotPassword' => 'نسيت كلمة المرور؟',
 			'auth.login.dontHaveAccount' => 'ليس لديك حساب؟',

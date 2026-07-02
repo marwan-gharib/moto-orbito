@@ -4,11 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/core/theme/app_colors_extension.dart';
-import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/use_cases/delete_account.dart';
+import 'package:moto_orbito/features/auth/domain/use_cases/get_session.dart';
+import 'package:moto_orbito/features/auth/domain/use_cases/sign_out.dart';
 import 'package:moto_orbito/features/auth/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:moto_orbito/features/auth/presentation/screens/welcome_screen.dart';
 
-class MockAuthRepository extends Mock implements AuthRepository {}
+class MockGetSession extends Mock implements GetSession {}
+
+class MockSignOutUseCase extends Mock implements SignOutUseCase {}
+
+class MockDeleteAccount extends Mock implements DeleteAccount {}
 
 class MockFailureMessageResolver extends Mock
     implements FailureMessageResolver {}
@@ -40,14 +46,18 @@ Widget _createTestApp(Widget child) {
 }
 
 void main() {
-  late AuthRepository repository;
+  late GetSession getSession;
+  late SignOutUseCase signOutUseCase;
+  late DeleteAccount deleteAccount;
   late FailureMessageResolver messageResolver;
   late AuthCubit authCubit;
 
   setUp(() {
-    repository = MockAuthRepository();
+    getSession = MockGetSession();
+    signOutUseCase = MockSignOutUseCase();
+    deleteAccount = MockDeleteAccount();
     messageResolver = MockFailureMessageResolver();
-    authCubit = AuthCubit(repository, messageResolver);
+    authCubit = AuthCubit(getSession, signOutUseCase, deleteAccount, messageResolver);
   });
 
   tearDown(() {
@@ -60,7 +70,10 @@ void main() {
       _createTestApp(
         BlocProvider<AuthCubit>.value(
           value: authCubit,
-          child: const WelcomeScreen(),
+          child: WelcomeScreen(
+            onLoginTap: () {},
+            onSignUpTap: () {},
+          ),
         ),
       ),
     );

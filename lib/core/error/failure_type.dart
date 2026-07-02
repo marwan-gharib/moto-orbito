@@ -4,6 +4,7 @@ enum FailureType {
   auth,
   emailAlreadyExists,
   emailNotVerified,
+  emailUnverifiedExists,
   invalidCredentials,
   otpExpired,
   invalidOtp,

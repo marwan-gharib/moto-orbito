@@ -93,6 +93,7 @@ class _Translations$auth$en implements Translations$auth$ar {
 	// Translations
 	@override String get emailAlreadyExists => 'Email is already registered.';
 	@override String get emailNotVerified => 'Please verify your email first.';
+	@override String get emailUnverifiedExists => 'This email exists but is not verified. Redirecting to verification...';
 	@override String get invalidCredentials => 'Invalid login credentials.';
 	@override String get invalidOtp => 'Invalid verification code.';
 	@override String get otpExpired => 'Verification code has expired.';
@@ -146,10 +147,22 @@ class _Translations$auth$signUp$en implements Translations$auth$signUp$ar {
 	// Translations
 	@override String get title => 'Create Account';
 	@override String get fullName => 'Full Name';
+	@override String get username => 'Username';
 	@override String get email => 'Email';
+	@override String get invalidEmail => 'Please enter a valid email address';
 	@override String get password => 'Password';
+	@override String get passwordHint => 'Enter your password';
 	@override String get confirmPassword => 'Confirm Password';
+	@override String get confirmPasswordHint => 'Re-enter your password';
 	@override String get passwordMismatch => 'Passwords do not match';
+	@override String get passwordUppercase => 'At least one uppercase letter';
+	@override String get passwordLowercase => 'At least one lowercase letter';
+	@override String get passwordNumber => 'At least one number';
+	@override String get passwordMinLength => 'At least 8 characters';
+	@override String get passwordSpecial => 'At least one special character';
+	@override String get passwordWeak => 'Password does not meet all requirements';
+	@override String get usernameTaken => 'This username is already taken';
+	@override String get usernameCheckPending => 'Please wait while we check the username availability';
 	@override String get phone => 'Phone';
 	@override String get submit => 'Create Account';
 	@override String get success => 'Account created successfully';
@@ -166,6 +179,7 @@ class _Translations$auth$login$en implements Translations$auth$login$ar {
 	@override String get title => 'Log In';
 	@override String get email => 'Email';
 	@override String get password => 'Password';
+	@override String get passwordHint => 'Enter your password';
 	@override String get submit => 'Log In';
 	@override String get forgotPassword => 'Forgot Password?';
 	@override String get dontHaveAccount => 'Don\'t have an account?';
@@ -322,6 +336,7 @@ extension on TranslationsEn {
 			'errors.cache' => 'An error occurred while accessing the cache.',
 			'auth.emailAlreadyExists' => 'Email is already registered.',
 			'auth.emailNotVerified' => 'Please verify your email first.',
+			'auth.emailUnverifiedExists' => 'This email exists but is not verified. Redirecting to verification...',
 			'auth.invalidCredentials' => 'Invalid login credentials.',
 			'auth.invalidOtp' => 'Invalid verification code.',
 			'auth.otpExpired' => 'Verification code has expired.',
@@ -333,10 +348,22 @@ extension on TranslationsEn {
 			'auth.deleteAccount.cancel' => 'Cancel',
 			'auth.signUp.title' => 'Create Account',
 			'auth.signUp.fullName' => 'Full Name',
+			'auth.signUp.username' => 'Username',
 			'auth.signUp.email' => 'Email',
+			'auth.signUp.invalidEmail' => 'Please enter a valid email address',
 			'auth.signUp.password' => 'Password',
+			'auth.signUp.passwordHint' => 'Enter your password',
 			'auth.signUp.confirmPassword' => 'Confirm Password',
+			'auth.signUp.confirmPasswordHint' => 'Re-enter your password',
 			'auth.signUp.passwordMismatch' => 'Passwords do not match',
+			'auth.signUp.passwordUppercase' => 'At least one uppercase letter',
+			'auth.signUp.passwordLowercase' => 'At least one lowercase letter',
+			'auth.signUp.passwordNumber' => 'At least one number',
+			'auth.signUp.passwordMinLength' => 'At least 8 characters',
+			'auth.signUp.passwordSpecial' => 'At least one special character',
+			'auth.signUp.passwordWeak' => 'Password does not meet all requirements',
+			'auth.signUp.usernameTaken' => 'This username is already taken',
+			'auth.signUp.usernameCheckPending' => 'Please wait while we check the username availability',
 			'auth.signUp.phone' => 'Phone',
 			'auth.signUp.submit' => 'Create Account',
 			'auth.signUp.success' => 'Account created successfully',
@@ -344,6 +371,7 @@ extension on TranslationsEn {
 			'auth.login.title' => 'Log In',
 			'auth.login.email' => 'Email',
 			'auth.login.password' => 'Password',
+			'auth.login.passwordHint' => 'Enter your password',
 			'auth.login.submit' => 'Log In',
 			'auth.login.forgotPassword' => 'Forgot Password?',
 			'auth.login.dontHaveAccount' => 'Don\'t have an account?',

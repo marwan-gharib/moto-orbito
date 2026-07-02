@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 
-import '../../../domain/repositories/auth_repository.dart';
+import '../../../domain/entities/user_entity.dart';
+import '../../../domain/repositories/params/params.dart';
 import '../../../domain/use_cases/login.dart';
 import '../../../domain/use_cases/social_login.dart';
+import '../../view_models/user_view_model.dart';
 import 'login_state.dart';
 
 final class LoginCubit extends Cubit<LoginState> {
@@ -21,18 +23,17 @@ final class LoginCubit extends Cubit<LoginState> {
     result.fold(
       onFailure: (failure) =>
           emit(LoginError(_messageResolver.resolve(failure))),
-      onSuccess: (data) => emit(LoginSuccess(data)),
+      onSuccess: (data) => emit(LoginSuccess(_mapToViewModel(data))),
     );
   }
 
   Future<void> signInWithGoogle() async {
     emit(const LoginLoading());
     final result = await _socialLogin.google();
-
     result.fold(
       onFailure: (failure) =>
           emit(LoginError(_messageResolver.resolve(failure))),
-      onSuccess: (data) => emit(LoginSuccess(data)),
+      onSuccess: (data) => emit(LoginSuccess(_mapToViewModel(data))),
     );
   }
 
@@ -42,7 +43,19 @@ final class LoginCubit extends Cubit<LoginState> {
     result.fold(
       onFailure: (failure) =>
           emit(LoginError(_messageResolver.resolve(failure))),
-      onSuccess: (data) => emit(LoginSuccess(data)),
+      onSuccess: (data) => emit(LoginSuccess(_mapToViewModel(data))),
+    );
+  }
+
+  UserViewModel _mapToViewModel(UserEntity entity) {
+    return UserViewModel(
+      id: entity.id,
+      email: entity.email,
+      fullName: entity.fullName,
+      username: entity.username,
+      profilePicture: entity.profilePicture,
+      isEmailVerified: entity.isEmailVerified,
+      isFirstTimeUser: entity.isFirstTimeUser,
     );
   }
 }

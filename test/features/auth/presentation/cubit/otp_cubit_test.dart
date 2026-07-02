@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
 import 'package:moto_orbito/core/error/failure_message_resolver.dart';
-import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/repositories/params/params.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/send_otp.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/verify_otp.dart';
 import 'package:moto_orbito/features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
@@ -51,7 +51,7 @@ void main() {
 
   group('sendEmailOtp', () {
     test('emits [OtpSending, OtpSent] on success', () async {
-      when(() => sendOtp.email(any())).thenAnswer(
+      when(() => sendOtp(any())).thenAnswer(
         (_) async => const Success(null),
       );
 
@@ -65,7 +65,7 @@ void main() {
     });
 
     test('emits [OtpSending, OtpError] on failure', () async {
-      when(() => sendOtp.email(any())).thenAnswer(
+      when(() => sendOtp(any())).thenAnswer(
         (_) async => const Failure(NetworkFailure()),
       );
       when(() => messageResolver.resolve(any())).thenReturn('Error message');
@@ -82,7 +82,7 @@ void main() {
 
   group('verifyEmailOtp', () {
     test('emits [OtpVerifying, OtpVerified] on success', () async {
-      when(() => verifyOtp.email(any())).thenAnswer(
+      when(() => verifyOtp(any())).thenAnswer(
         (_) async => const Success(null),
       );
 
@@ -98,7 +98,7 @@ void main() {
 
   group('resendOtp - max 3 attempts', () {
     test('blocks after 3 resend attempts', () async {
-      when(() => sendOtp.email(any())).thenAnswer(
+      when(() => sendOtp(any())).thenAnswer(
         (_) async => const Success(null),
       );
 

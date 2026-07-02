@@ -1,4 +1,4 @@
-import '../../../domain/entities/user_entity.dart';
+import '../../view_models/user_view_model.dart';
 
 sealed class SignUpState {
   const SignUpState();
@@ -12,10 +12,18 @@ final class SignUpLoading extends SignUpState {
   const SignUpLoading();
 }
 
+final class SignUpUsernameTaken extends SignUpState {
+  const SignUpUsernameTaken();
+}
+
 final class SignUpSuccess extends SignUpState {
   const SignUpSuccess({required this.user});
 
-  final UserEntity user;
+  final UserViewModel user;
+}
+
+final class SignUpEmailUnverified extends SignUpState {
+  const SignUpEmailUnverified();
 }
 
 final class SignUpError extends SignUpState {

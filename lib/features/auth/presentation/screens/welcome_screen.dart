@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
-import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
 import '../widgets/social_auth_button.dart';
 
 final class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+  const WelcomeScreen({
+    super.key,
+    required this.onLoginTap,
+    required this.onSignUpTap,
+  });
+
+  final VoidCallback onLoginTap;
+  final VoidCallback onSignUpTap;
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +108,13 @@ final class WelcomeScreen extends StatelessWidget {
                 SocialAuthButton(
                   label: t.google,
                   icon: const Icon(Icons.g_mobiledata),
-                  onTap: () => context.push(AppRoute.login),
+                  onTap: onLoginTap,
                 ),
                 const SizedBox(height: Spacing.sm),
                 SocialAuthButton(
                   label: t.facebook,
                   icon: const Icon(Icons.facebook),
-                  onTap: () => context.push(AppRoute.login),
+                  onTap: onLoginTap,
                 ),
                 const SizedBox(height: Spacing.lg),
                 Row(
@@ -140,11 +145,11 @@ final class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: Spacing.lg),
                 AppButton(
                   label: t.signUp,
-                  onTap: () => context.push(AppRoute.signUp),
+                  onTap: onSignUpTap,
                 ),
                 const SizedBox(height: Spacing.md),
                 TextButton(
-                  onPressed: () => context.push(AppRoute.login),
+                  onPressed: onLoginTap,
                   child: Text(
                     t.logIn,
                     style: context.textTheme.labelLarge?.copyWith(

@@ -24,6 +24,10 @@ void main() {
     test('InvalidCredentials has correct type', () {
       expect(const InvalidCredentials().type, FailureType.invalidCredentials);
     });
+
+    test('EmailUnverifiedExists has correct type', () {
+      expect(const EmailUnverifiedExists().type, FailureType.emailUnverifiedExists);
+    });
     test('OtpExpired has correct type', () {
       expect(const OtpExpired().type, FailureType.otpExpired);
     });

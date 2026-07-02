@@ -5,6 +5,7 @@ import 'package:moto_orbito/core/error/failure.dart';
 import 'package:moto_orbito/core/error/failure_type.dart';
 import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/repositories/params/params.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/sign_up.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
@@ -22,13 +23,14 @@ void main() {
     email: 'test@test.com',
     password: 'password123',
     fullName: 'Test User',
-    phone: '+971501234567',
+    username: 'testuser',
   );
 
   final testUser = UserEntity(
     id: 'uid-1',
     email: 'test@test.com',
     fullName: 'Test User',
+    username: 'testuser',
     createdAt: DateTime(2026),
   );
 

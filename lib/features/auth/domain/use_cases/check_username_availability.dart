@@ -4,13 +4,13 @@ import 'package:moto_orbito/core/utils/use_case.dart';
 import '../repositories/auth_repository.dart';
 import '../repositories/params/params.dart';
 
-class VerifyOtp implements UseCase<void, OtpVerifyParams> {
-  VerifyOtp(this._repository);
+class CheckUsernameAvailability implements UseCase<bool, UsernameCheckParams> {
+  CheckUsernameAvailability(this._repository);
 
   final AuthRepository _repository;
 
   @override
-  Future<ApiResult<void>> call(OtpVerifyParams params) {
-    return _repository.verifyEmailOtp(params);
+  Future<ApiResult<bool>> call(UsernameCheckParams params) {
+    return _repository.checkUsernameAvailability(params);
   }
 }

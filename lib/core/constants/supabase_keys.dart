@@ -31,6 +31,7 @@ final class SupabaseKeys {
   static const String updatedAt = 'updated_at';
 
   // ── users Columns ──────────────────────────────────────────────────────────
+  static const String username = 'username';
   static const String fcmToken = 'fcm_token';
   static const String speedLimitKmh = 'speed_limit_kmh';
   static const String isPrimary = 'is_primary';

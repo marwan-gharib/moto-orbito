@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/repositories/params/params.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/reset_password.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}

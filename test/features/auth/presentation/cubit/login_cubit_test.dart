@@ -4,7 +4,7 @@ import 'package:moto_orbito/core/error/api_result.dart';
 import 'package:moto_orbito/core/error/failure.dart';
 import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 import 'package:moto_orbito/features/auth/domain/entities/user_entity.dart';
-import 'package:moto_orbito/features/auth/domain/repositories/auth_repository.dart';
+import 'package:moto_orbito/features/auth/domain/repositories/params/params.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/login.dart';
 import 'package:moto_orbito/features/auth/domain/use_cases/social_login.dart';
 import 'package:moto_orbito/features/auth/presentation/cubits/login_cubit/login_cubit.dart';
@@ -21,6 +21,7 @@ final _testUser = UserEntity(
   id: 'uid-1',
   email: 'test@test.com',
   fullName: 'Test',
+  username: 'testuser',
   createdAt: DateTime(2026),
 );
 

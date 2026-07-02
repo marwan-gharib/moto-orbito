@@ -12,6 +12,9 @@ final class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.keyboardType,
     this.prefixIcon,
+    this.suffixWidget,
+    this.focusNode,
+    this.onChanged,
     this.focusBorderColor,
     this.filled = false,
     this.fillColor,
@@ -25,6 +28,9 @@ final class AppTextField extends StatefulWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final Widget? prefixIcon;
+  final Widget? suffixWidget;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
   final Color? focusBorderColor;
   final bool filled;
   final Color? fillColor;
@@ -40,12 +46,12 @@ final class _AppTextFieldState extends State<AppTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    _focusNode = widget.focusNode ?? FocusNode();
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
     super.dispose();
   }
 
@@ -54,11 +60,26 @@ final class _AppTextFieldState extends State<AppTextField> {
     final borderColor = context.colorScheme.onSurface.withAlpha(30);
     final accentColor = widget.focusBorderColor ?? context.colorScheme.primary;
 
+    final suffixIcon = widget.suffixWidget ??
+        (widget.obscureText
+            ? IconButton(
+                onPressed: () => setState(() => _obscured = !_obscured),
+                icon: Icon(
+                  _obscured
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  size: 20,
+                ),
+                color: context.colorScheme.onSurface.withAlpha(128),
+              )
+            : null);
+
     return TextFormField(
       focusNode: _focusNode,
       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       controller: widget.controller,
       validator: widget.validator,
+      onChanged: widget.onChanged,
       obscureText: _obscured,
       keyboardType: widget.keyboardType,
       style: context.textTheme.bodyLarge?.copyWith(
@@ -93,18 +114,7 @@ final class _AppTextFieldState extends State<AppTextField> {
           minWidth: 48,
           minHeight: 24,
         ),
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                onPressed: () => setState(() => _obscured = !_obscured),
-                icon: Icon(
-                  _obscured
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  size: 20,
-                ),
-                color: context.colorScheme.onSurface.withAlpha(128),
-              )
-            : null,
+        suffixIcon: suffixIcon,
         filled: widget.filled,
         fillColor: widget.fillColor,
         border: OutlineInputBorder(

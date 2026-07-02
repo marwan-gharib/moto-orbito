@@ -11,10 +11,10 @@ import '../../features/auth/presentation/cubits/forgot_password_cubit/forgot_pas
 import '../../features/auth/presentation/cubits/login_cubit/login_cubit.dart';
 import '../../features/auth/presentation/cubits/otp_cubit/otp_cubit.dart';
 import '../../features/auth/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
+import '../../features/auth/presentation/view_models/user_view_model.dart';
 import '../../features/auth/presentation/screens/email_verification_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/phone_otp_screen.dart';
 import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/auth/presentation/screens/welcome_screen.dart';
 import '../../features/onboarding/presentation/cubits/onboarding_cubit/onboarding_cubit.dart';
@@ -69,38 +69,54 @@ final class AppRouter {
         GoRoute(
           path: AppRoute.welcome,
           name: AppRoute.welcome,
-          builder: (_, _) => const WelcomeScreen(),
+          builder: (context, _) => WelcomeScreen(
+            onLoginTap: () => context.push(AppRoute.login),
+            onSignUpTap: () => context.push(AppRoute.signUp),
+          ),
         ),
         GoRoute(
           path: AppRoute.signUp,
           name: AppRoute.signUp,
-          builder: (_, _) => BlocProvider.value(
-            value: GetIt.instance<SignUpCubit>(),
-            child: const SignUpScreen(),
+          builder: (context, _) => BlocProvider(
+            create: (_) => GetIt.instance<SignUpCubit>(),
+            child: SignUpScreen(
+              onSignUpSuccess: (UserViewModel user, String email) {
+                GetIt.instance<AuthCubit>().setUser(user);
+                GetIt.instance<OtpCubit>().sendEmailOtp(email);
+                context.pushReplacement(AppRoute.verifyEmail, extra: email);
+              },
+              onEmailUnverified: (email) {
+                GetIt.instance<OtpCubit>().sendEmailOtp(email);
+                context.pushReplacement(AppRoute.verifyEmail, extra: email);
+              },
+              onLoginTap: () => context.pushReplacement(AppRoute.login),
+            ),
           ),
         ),
         GoRoute(
           path: AppRoute.verifyEmail,
           name: AppRoute.verifyEmail,
-          builder: (_, state) => BlocProvider.value(
-            value: GetIt.instance<OtpCubit>(),
-            child: EmailVerificationScreen(email: state.extra as String? ?? ''),
+          builder: (context, state) => BlocProvider(
+            create: (_) => GetIt.instance<OtpCubit>(),
+            child: EmailVerificationScreen(
+              email: state.extra as String? ?? '',
+              onVerificationSuccess: () => context.pushReplacement(AppRoute.home),
+            ),
           ),
         ),
         GoRoute(
           path: AppRoute.login,
           name: AppRoute.login,
-          builder: (_, _) => BlocProvider.value(
+          builder: (context, _) => BlocProvider.value(
             value: GetIt.instance<LoginCubit>(),
-            child: const LoginScreen(),
-          ),
-        ),
-        GoRoute(
-          path: AppRoute.phoneOtp,
-          name: AppRoute.phoneOtp,
-          builder: (_, state) => BlocProvider.value(
-            value: GetIt.instance<OtpCubit>(),
-            child: PhoneOtpScreen(phone: state.extra as String? ?? ''),
+            child: LoginScreen(
+              onLoginSuccess: (UserViewModel user) {
+                GetIt.instance<AuthCubit>().setUser(user);
+                context.pushReplacement(AppRoute.home);
+              },
+              onForgotPasswordTap: () => context.push(AppRoute.forgotPassword),
+              onSignUpTap: () => context.pushReplacement(AppRoute.signUp),
+            ),
           ),
         ),
         GoRoute(
@@ -156,7 +172,6 @@ final class AppRouter {
       AppRoute.signUp,
       AppRoute.verifyEmail,
       AppRoute.login,
-      AppRoute.phoneOtp,
       AppRoute.forgotPassword,
     };
     return !publicRoutes.contains(location) &&

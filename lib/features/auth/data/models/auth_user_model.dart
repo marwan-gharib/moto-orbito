@@ -6,8 +6,7 @@ final class AuthUserModel {
     required this.email,
     this.emailConfirmedAt,
     required this.fullName,
-    this.phone,
-    this.phoneVerifiedAt,
+    required this.username,
     this.fcmToken,
     this.locale = 'ar',
     required this.createdAt,
@@ -18,8 +17,7 @@ final class AuthUserModel {
   final String email;
   final String? emailConfirmedAt;
   final String fullName;
-  final String? phone;
-  final String? phoneVerifiedAt;
+  final String username;
   final String? fcmToken;
   final String locale;
   final String createdAt;
@@ -31,8 +29,7 @@ final class AuthUserModel {
       email: json[SupabaseKeys.email] as String,
       emailConfirmedAt: json[SupabaseKeys.emailConfirmedAt] as String?,
       fullName: json[SupabaseKeys.fullName] as String,
-      phone: json[SupabaseKeys.phone] as String?,
-      phoneVerifiedAt: json[SupabaseKeys.phoneVerifiedAt] as String?,
+      username: json[SupabaseKeys.username] as String,
       fcmToken: json[SupabaseKeys.fcmToken] as String?,
       locale: json[SupabaseKeys.locale] as String? ?? 'ar',
       createdAt: json[SupabaseKeys.createdAt] as String,
@@ -46,8 +43,7 @@ final class AuthUserModel {
       SupabaseKeys.email: email,
       SupabaseKeys.emailConfirmedAt: emailConfirmedAt,
       SupabaseKeys.fullName: fullName,
-      SupabaseKeys.phone: phone,
-      SupabaseKeys.phoneVerifiedAt: phoneVerifiedAt,
+      SupabaseKeys.username: username,
       SupabaseKeys.fcmToken: fcmToken,
       SupabaseKeys.locale: locale,
       SupabaseKeys.createdAt: createdAt,

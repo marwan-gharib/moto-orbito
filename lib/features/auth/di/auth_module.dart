@@ -6,10 +6,13 @@ import 'package:moto_orbito/core/services/supabase/supabase_service.dart';
 
 import '../data/repositories/auth_repository_impl.dart';
 import '../domain/repositories/auth_repository.dart';
+import '../domain/use_cases/check_username_availability.dart';
 import '../domain/use_cases/delete_account.dart';
+import '../domain/use_cases/get_session.dart';
 import '../domain/use_cases/login.dart';
 import '../domain/use_cases/reset_password.dart';
 import '../domain/use_cases/send_otp.dart';
+import '../domain/use_cases/sign_out.dart';
 import '../domain/use_cases/sign_up.dart';
 import '../domain/use_cases/social_login.dart';
 import '../domain/use_cases/verify_otp.dart';
@@ -36,12 +39,10 @@ void registerAuthModule() {
     sl.registerLazySingleton<SignUp>(() => SignUp(sl<AuthRepository>()));
   }
 
-  if (!sl.isRegistered<SendOtp>()) {
-    sl.registerLazySingleton<SendOtp>(() => SendOtp(sl<AuthRepository>()));
-  }
-
-  if (!sl.isRegistered<VerifyOtp>()) {
-    sl.registerLazySingleton<VerifyOtp>(() => VerifyOtp(sl<AuthRepository>()));
+  if (!sl.isRegistered<CheckUsernameAvailability>()) {
+    sl.registerLazySingleton<CheckUsernameAvailability>(
+      () => CheckUsernameAvailability(sl<AuthRepository>()),
+    );
   }
 
   if (!sl.isRegistered<Login>()) {
@@ -63,15 +64,41 @@ void registerAuthModule() {
         () => DeleteAccount(sl<AuthRepository>()));
   }
 
+  if (!sl.isRegistered<SendOtp>()) {
+    sl.registerLazySingleton<SendOtp>(() => SendOtp(sl<AuthRepository>()));
+  }
+
+  if (!sl.isRegistered<VerifyOtp>()) {
+    sl.registerLazySingleton<VerifyOtp>(() => VerifyOtp(sl<AuthRepository>()));
+  }
+
+  if (!sl.isRegistered<GetSession>()) {
+    sl.registerLazySingleton<GetSession>(() => GetSession(sl<AuthRepository>()));
+  }
+
+  if (!sl.isRegistered<SignOutUseCase>()) {
+    sl.registerLazySingleton<SignOutUseCase>(
+        () => SignOutUseCase(sl<AuthRepository>()));
+  }
+
   if (!sl.isRegistered<AuthCubit>()) {
     sl.registerLazySingleton<AuthCubit>(
-      () => AuthCubit(sl<AuthRepository>(), sl<FailureMessageResolver>()),
+      () => AuthCubit(
+        sl<GetSession>(),
+        sl<SignOutUseCase>(),
+        sl<DeleteAccount>(),
+        sl<FailureMessageResolver>(),
+      ),
     );
   }
 
   if (!sl.isRegistered<SignUpCubit>()) {
     sl.registerFactory<SignUpCubit>(
-      () => SignUpCubit(sl<SignUp>(), sl<FailureMessageResolver>()),
+      () => SignUpCubit(
+        sl<SignUp>(),
+        sl<CheckUsernameAvailability>(),
+        sl<FailureMessageResolver>(),
+      ),
     );
   }
 

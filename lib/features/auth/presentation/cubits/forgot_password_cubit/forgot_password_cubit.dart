@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moto_orbito/core/error/failure_message_resolver.dart';
 
-import '../../../domain/repositories/auth_repository.dart';
+import '../../../domain/repositories/params/params.dart';
 import '../../../domain/use_cases/reset_password.dart';
 import 'forgot_password_state.dart';
 

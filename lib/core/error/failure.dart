@@ -28,6 +28,10 @@ final class EmailNotVerified extends AppFailure {
   const EmailNotVerified() : super(FailureType.emailNotVerified);
 }
 
+final class EmailUnverifiedExists extends AppFailure {
+  const EmailUnverifiedExists() : super(FailureType.emailUnverifiedExists);
+}
+
 final class InvalidCredentials extends AppFailure {
   const InvalidCredentials() : super(FailureType.invalidCredentials);
 }

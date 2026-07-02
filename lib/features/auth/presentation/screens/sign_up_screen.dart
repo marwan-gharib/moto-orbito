@@ -1,21 +1,31 @@
-import 'dart:typed_data';
-
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
-import 'package:moto_orbito/core/router/routes.dart';
+import 'package:moto_orbito/core/i18n/strings.g.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
+import 'package:moto_orbito/core/widgets/app_snack_bar.dart';
 
-import '../cubits/auth_cubit/auth_cubit.dart';
+import '../view_models/user_view_model.dart';
 import '../cubits/sign_up_cubit/sign_up_cubit.dart';
 import '../cubits/sign_up_cubit/sign_up_state.dart';
 import '../widgets/auth_text_field.dart';
+import '../widgets/password_checklist.dart';
 import '../widgets/profile_image_picker.dart';
 
 final class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({
+    super.key,
+    required this.onSignUpSuccess,
+    this.onEmailUnverified,
+    this.onLoginTap,
+  });
+
+  final void Function(UserViewModel user, String email) onSignUpSuccess;
+  final void Function(String email)? onEmailUnverified;
+  final VoidCallback? onLoginTap;
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -24,20 +34,48 @@ final class SignUpScreen extends StatefulWidget {
 final class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
+  final _usernameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _confirmPasswordCtrl = TextEditingController();
+  final _passwordFocusNode = FocusNode();
 
-  Uint8List? _profileImageBytes;
-  String? _profileImageName;
+  @override
+  void initState() {
+    super.initState();
+    _passwordCtrl.addListener(_onPasswordChanged);
+    _passwordFocusNode.addListener(_onPasswordFocusChanged);
+  }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
+    _usernameCtrl.dispose();
     _emailCtrl.dispose();
+    _passwordCtrl.removeListener(_onPasswordChanged);
     _passwordCtrl.dispose();
     _confirmPasswordCtrl.dispose();
+    _passwordFocusNode.removeListener(_onPasswordFocusChanged);
+    _passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onPasswordChanged() {
+    setState(() {});
+  }
+
+  void _onPasswordFocusChanged() {
+    setState(() {});
+  }
+
+  void _onSignUp(SignUpCubit cubit) {
+    if (_formKey.currentState?.validate() != true) return;
+    cubit.signUp(
+      email: _emailCtrl.text.trim(),
+      password: _passwordCtrl.text,
+      fullName: _nameCtrl.text.trim(),
+      username: _usernameCtrl.text.trim(),
+    );
   }
 
   @override
@@ -49,20 +87,30 @@ final class _SignUpScreenState extends State<SignUpScreen> {
       listener: (context, state) {
         switch (state) {
           case SignUpSuccess(user: final user):
-            context.read<AuthCubit>().setUser(user);
-            context.pushReplacement(AppRoute.verifyEmail,
-                extra: _emailCtrl.text.trim());
+            widget.onSignUpSuccess(user, _emailCtrl.text.trim());
+          case SignUpEmailUnverified():
+            widget.onEmailUnverified?.call(_emailCtrl.text.trim());
+          case SignUpError(message: final msg):
+            AppSnackBar.showError(context, msg);
+          case SignUpUsernameTaken():
+            AppSnackBar.showError(
+              context,
+              context.t.auth.signUp.usernameTaken,
+            );
           default:
             break;
         }
       },
       builder: (context, state) {
-        final isLoading =
-            switch (state) { SignUpLoading() => true, _ => false };
-        final errorMessage = switch (state) {
-          SignUpError(message: final msg) => msg,
-          _ => null,
+        final isLoading = switch (state) {
+          SignUpLoading() => true,
+          _ => false,
         };
+
+        final password = _passwordCtrl.text;
+        final isPasswordFocused = _passwordFocusNode.hasFocus;
+
+        final requirements = _buildPasswordRequirements(t, password);
 
         return Scaffold(
           body: Container(
@@ -108,20 +156,15 @@ final class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       const SizedBox(height: Spacing.md),
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.colors.neonAccent.withAlpha(60),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.motorcycle,
-                          size: 36,
-                          color: context.colors.neonAccent,
+                      Center(
+                        child: BlocBuilder<SignUpCubit, SignUpState>(
+                          builder: (context, _) {
+                            final cubit = context.read<SignUpCubit>();
+                            return ProfileImagePicker(
+                              imageBytes: cubit.profileImageBytes,
+                              onImagePicked: cubit.setProfileImage,
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: Spacing.md),
@@ -129,18 +172,6 @@ final class _SignUpScreenState extends State<SignUpScreen> {
                         t.auth.signUp.title,
                         style: context.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: Spacing.xl),
-                      Center(
-                        child: ProfileImagePicker(
-                          imageBytes: _profileImageBytes,
-                          onImagePicked: (bytes, name) {
-                            setState(() {
-                              _profileImageBytes = bytes;
-                              _profileImageName = name;
-                            });
-                          },
                         ),
                       ),
                       const SizedBox(height: Spacing.xl),
@@ -156,32 +187,57 @@ final class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: Spacing.md),
                       AuthTextField(
+                        label: t.auth.signUp.username,
+                        hint: t.auth.signUp.username,
+                        controller: _usernameCtrl,
+                        icon: Icons.alternate_email,
+                        validator: (v) =>
+                            v == null || v.trim().isEmpty
+                                ? t.errors.fieldRequired
+                                : null,
+                      ),
+                      const SizedBox(height: Spacing.md),
+                      AuthTextField(
                         label: t.auth.signUp.email,
                         hint: t.auth.signUp.email,
                         controller: _emailCtrl,
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
-                        validator: (v) =>
-                            v == null || !v.contains('@')
-                                ? t.errors.fieldRequired
-                                : null,
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return t.errors.fieldRequired;
+                          }
+                          if (!EmailValidator.validate(v.trim())) {
+                            return t.auth.signUp.invalidEmail;
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: Spacing.md),
                       AuthTextField(
                         label: t.auth.signUp.password,
-                        hint: '********',
+                        hint: t.auth.signUp.passwordHint,
                         controller: _passwordCtrl,
                         icon: Icons.lock_outlined,
                         obscureText: true,
-                        validator: (v) =>
-                            v == null || v.length < 8
-                                ? t.errors.fieldRequired
-                                : null,
+                        focusNode: _passwordFocusNode,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return t.errors.fieldRequired;
+                          }
+                          final missing = _getMissingRequirements(v);
+                          if (missing.isNotEmpty) {
+                            return t.auth.signUp.passwordWeak;
+                          }
+                          return null;
+                        },
                       ),
+                      if (isPasswordFocused && requirements.any((r) => !r.isMet))
+                        PasswordChecklist(requirements: requirements),
                       const SizedBox(height: Spacing.md),
                       AuthTextField(
                         label: t.auth.signUp.confirmPassword,
-                        hint: '********',
+                        hint: t.auth.signUp.confirmPasswordHint,
                         controller: _confirmPasswordCtrl,
                         icon: Icons.lock_outlined,
                         obscureText: true,
@@ -196,38 +252,10 @@ final class _SignUpScreenState extends State<SignUpScreen> {
                         },
                       ),
                       const SizedBox(height: Spacing.lg),
-                      if (errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: Spacing.md),
-                          child: Container(
-                            padding: const EdgeInsets.all(Spacing.sm),
-                            decoration: BoxDecoration(
-                              color: colors.error.withAlpha(20),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              errorMessage,
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: colors.error,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
                       AppButton(
                         label: t.auth.signUp.submit,
                         isLoading: isLoading,
-                        onTap: () {
-                          if (_formKey.currentState?.validate() == true) {
-                            context.read<SignUpCubit>().signUp(
-                                  email: _emailCtrl.text.trim(),
-                                  password: _passwordCtrl.text,
-                                  fullName: _nameCtrl.text.trim(),
-                                  profilePicturePath: _profileImageName,
-                                  profilePictureBytes: _profileImageBytes,
-                                );
-                          }
-                        },
+                        onTap: () => _onSignUp(context.read<SignUpCubit>()),
                       ),
                       const SizedBox(height: Spacing.xl),
                       Row(
@@ -240,8 +268,7 @@ final class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () =>
-                                context.pushReplacement(AppRoute.login),
+                            onPressed: widget.onLoginTap,
                             child: Text(
                               t.auth.welcome.logIn,
                               style: context.textTheme.labelLarge?.copyWith(
@@ -261,5 +288,42 @@ final class _SignUpScreenState extends State<SignUpScreen> {
         );
       },
     );
+  }
+
+  List<PasswordRequirement> _buildPasswordRequirements(Translations t, String password) {
+    return [
+      PasswordRequirement(
+        label: t.auth.signUp.passwordMinLength,
+        isMet: password.length >= 8,
+      ),
+      PasswordRequirement(
+        label: t.auth.signUp.passwordUppercase,
+        isMet: password.contains(RegExp(r'[A-Z]')),
+      ),
+      PasswordRequirement(
+        label: t.auth.signUp.passwordLowercase,
+        isMet: password.contains(RegExp(r'[a-z]')),
+      ),
+      PasswordRequirement(
+        label: t.auth.signUp.passwordNumber,
+        isMet: password.contains(RegExp(r'[0-9]')),
+      ),
+      PasswordRequirement(
+        label: t.auth.signUp.passwordSpecial,
+        isMet: password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
+      ),
+    ];
+  }
+
+  List<String> _getMissingRequirements(String password) {
+    final missing = <String>[];
+    if (password.length < 8) missing.add('minLength');
+    if (!password.contains(RegExp(r'[A-Z]'))) missing.add('uppercase');
+    if (!password.contains(RegExp(r'[a-z]'))) missing.add('lowercase');
+    if (!password.contains(RegExp(r'[0-9]'))) missing.add('number');
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      missing.add('special');
+    }
+    return missing;
   }
 }

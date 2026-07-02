@@ -11,6 +11,9 @@ final class AuthTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.validator,
+    this.focusNode,
+    this.onChanged,
+    this.suffixWidget,
     super.key,
   });
 
@@ -21,6 +24,9 @@ final class AuthTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
+  final Widget? suffixWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +39,9 @@ final class AuthTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       validator: validator,
+      focusNode: focusNode,
+      onChanged: onChanged,
+      suffixWidget: suffixWidget,
       prefixIcon: Icon(icon),
       focusBorderColor: context.colors.neonAccent,
       filled: true,

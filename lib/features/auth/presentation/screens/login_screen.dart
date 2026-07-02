@@ -2,18 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moto_orbito/core/extensions/context_extensions.dart';
-import 'package:moto_orbito/core/router/routes.dart';
 import 'package:moto_orbito/core/theme/spacing.dart';
 import 'package:moto_orbito/core/widgets/app_button.dart';
 
-import '../cubits/auth_cubit/auth_cubit.dart';
+import '../view_models/user_view_model.dart';
 import '../cubits/login_cubit/login_cubit.dart';
 import '../cubits/login_cubit/login_state.dart';
 import '../widgets/auth_text_field.dart';
 import '../widgets/social_auth_button.dart';
 
 final class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+    required this.onLoginSuccess,
+    this.onSignUpTap,
+    this.onForgotPasswordTap,
+  });
+
+  final void Function(UserViewModel user) onLoginSuccess;
+  final VoidCallback? onSignUpTap;
+  final VoidCallback? onForgotPasswordTap;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -40,8 +48,7 @@ final class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         switch (state) {
           case LoginSuccess(user: final user):
-            context.read<AuthCubit>().setUser(user);
-            context.pushReplacement(AppRoute.home);
+            widget.onLoginSuccess(user);
           default:
             break;
         }
@@ -145,7 +152,7 @@ final class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: Spacing.md),
                       AuthTextField(
                         label: t.auth.login.password,
-                        hint: '********',
+                        hint: t.auth.login.passwordHint,
                         controller: _passwordCtrl,
                         icon: Icons.lock_outlined,
                         obscureText: true,
@@ -157,8 +164,7 @@ final class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () =>
-                              context.push(AppRoute.forgotPassword),
+                          onPressed: widget.onForgotPasswordTap,
                           child: Text(
                             t.auth.login.forgotPassword,
                             style: context.textTheme.bodyMedium?.copyWith(
@@ -252,8 +258,7 @@ final class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () =>
-                                context.pushReplacement(AppRoute.signUp),
+                            onPressed: widget.onSignUpTap,
                             child: Text(
                               t.auth.welcome.signUp,
                               style: context.textTheme.labelLarge?.copyWith(

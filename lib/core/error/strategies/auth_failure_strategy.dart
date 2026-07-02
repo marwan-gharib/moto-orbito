@@ -12,6 +12,7 @@ final class AuthFailureStrategy implements FailureMessageStrategy {
     return switch (failure.type) {
       FailureType.emailAlreadyExists => t.auth.emailAlreadyExists,
       FailureType.emailNotVerified => t.auth.emailNotVerified,
+      FailureType.emailUnverifiedExists => t.auth.emailUnverifiedExists,
       FailureType.invalidCredentials => t.auth.invalidCredentials,
       FailureType.otpExpired => t.auth.otpExpired,
       FailureType.invalidOtp => t.auth.invalidOtp,

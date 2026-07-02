@@ -5,20 +5,17 @@ final class SignUpRequestModel {
     required this.email,
     required this.password,
     required this.fullName,
-    required this.phone,
   });
 
   final String email;
   final String password;
   final String fullName;
-  final String phone;
 
   Map<String, dynamic> toJson() {
     return {
       SupabaseKeys.email: email,
       SupabaseKeys.password: password,
       SupabaseKeys.fullName: fullName,
-      SupabaseKeys.phone: phone,
     };
   }
 }

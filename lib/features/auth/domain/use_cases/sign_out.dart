@@ -3,13 +3,13 @@ import 'package:moto_orbito/core/utils/use_case.dart';
 
 import '../repositories/auth_repository.dart';
 
-class DeleteAccount implements UseCaseNoInput<void> {
-  DeleteAccount(this._repository);
+class SignOutUseCase implements UseCaseNoInput<void> {
+  SignOutUseCase(this._repository);
 
   final AuthRepository _repository;
 
   @override
   Future<ApiResult<void>> call() {
-    return _repository.deleteAccount();
+    return _repository.signOut();
   }
 }

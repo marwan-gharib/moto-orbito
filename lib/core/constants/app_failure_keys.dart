@@ -13,6 +13,7 @@ final class AppFailureKeys {
 
   static const String emailAlreadyExists = 'auth.emailAlreadyExists';
   static const String emailNotVerified = 'auth.emailNotVerified';
+  static const String emailUnverifiedExists = 'auth.emailUnverifiedExists';
   static const String invalidCredentials = 'auth.invalidCredentials';
   static const String otpExpired = 'auth.otpExpired';
   static const String invalidOtp = 'auth.invalidOtp';

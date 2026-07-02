@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:dio/dio.dart';
 import 'package:moto_orbito/core/constants/app_constants.dart';
 import 'package:moto_orbito/core/constants/app_links.dart';
@@ -12,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/repositories/params/params.dart';
 import '../mappers/auth_user_mapper.dart';
 import '../models/auth_user_model.dart';
 
@@ -38,7 +42,7 @@ final class AuthRepositoryImpl implements AuthRepository {
         password: params.password,
         data: {
           SupabaseKeys.fullName: params.fullName,
-          SupabaseKeys.phone: params.phone,
+          SupabaseKeys.username: params.username,
         },
       );
       final user = response.user;
@@ -46,26 +50,18 @@ final class AuthRepositoryImpl implements AuthRepository {
         return const Failure(AuthFailure());
       }
 
-      String? profilePictureUrl;
-      if (params.profilePictureBytes != null && params.profilePicturePath != null) {
-        final uploadResult = await _storageService.uploadFile(
-          bucket: SupabaseKeys.profilesBucket,
-          path: '${user.id}/${params.profilePicturePath!}',
-          bytes: params.profilePictureBytes!,
-        );
-
-        uploadResult.fold(
-          onFailure: (f) => null,
-          onSuccess: (url) => profilePictureUrl = url,
-        );
-      }
+      final profilePictureUrl = await _uploadProfilePicture(
+        userId: user.id,
+        bytes: params.profilePictureBytes,
+        path: params.profilePicturePath,
+      );
 
       final model = AuthUserModel(
         id: user.id,
         email: user.email ?? params.email,
         emailConfirmedAt: user.emailConfirmedAt,
         fullName: params.fullName,
-        phone: params.phone,
+        username: params.username,
         locale: AppConstants.defaultLocale,
         createdAt: user.createdAt,
         profilePicture: profilePictureUrl,
@@ -80,16 +76,79 @@ final class AuthRepositoryImpl implements AuthRepository {
 
       return Success(AuthUserMapper.toEntity(model));
     } on supabase.AuthException catch (e) {
-      return Failure(
-        e.message.contains('already registered')
-            ? const EmailAlreadyExists()
-            : const AuthFailure(),
-      );
+      if (e.message.contains('already registered')) {
+        return _handleExistingEmail(params);
+      }
+      return const Failure(AuthFailure());
     } on DioException catch (e) {
       return Failure(FailureMapper.fromDioException(e));
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
+  }
+
+  Future<ApiResult<UserEntity>> _handleExistingEmail(SignUpParams params) async {
+    try {
+      final response = await _client.auth.signInWithPassword(
+        email: params.email,
+        password: params.password,
+      );
+      final user = response.user;
+      if (user == null) {
+        return const Failure(AuthFailure());
+      }
+      if (user.emailConfirmedAt == null) {
+        await _client.auth.signOut();
+        return const Failure(EmailUnverifiedExists());
+      }
+      return const Failure(EmailAlreadyExists());
+    } on supabase.AuthException catch (e) {
+      if (e.message.contains('Invalid login credentials')) {
+        return const Failure(EmailAlreadyExists());
+      }
+      return const Failure(EmailAlreadyExists());
+    } on Object {
+      return const Failure(EmailAlreadyExists());
+    }
+  }
+
+  Future<String?> _uploadProfilePicture({
+    required String userId,
+    Uint8List? bytes,
+    String? path,
+  }) async {
+    final imageBytes = bytes ?? await _generateDefaultAvatarBytes();
+    final imagePath = path ?? 'avatar.png';
+
+    final uploadResult = await _storageService.uploadFile(
+      bucket: SupabaseKeys.profilesBucket,
+      path: '$userId/$imagePath',
+      bytes: imageBytes,
+    );
+
+    String? url;
+    uploadResult.fold(
+      onFailure: (_) => null,
+      onSuccess: (resultUrl) => url = resultUrl,
+    );
+    return url;
+  }
+
+  Future<Uint8List> _generateDefaultAvatarBytes() async {
+    const size = 200.0;
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(
+      recorder,
+      ui.Rect.fromLTWH(0, 0, size, size),
+    );
+
+    final bgPaint = ui.Paint()..color = const ui.Color(0xFFFF6B00);
+    canvas.drawCircle(const ui.Offset(size / 2, size / 2), size / 2, bgPaint);
+
+    final picture = recorder.endRecording();
+    final img = await picture.toImage(size.toInt(), size.toInt());
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
   }
 
   @override
@@ -124,8 +183,6 @@ final class AuthRepositoryImpl implements AuthRepository {
             ? const InvalidCredentials()
             : const AuthFailure(),
       );
-    } on DioException catch (e) {
-      return Failure(FailureMapper.fromDioException(e));
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }
@@ -144,21 +201,26 @@ final class AuthRepositoryImpl implements AuthRepository {
         return const Failure(AuthFailure());
       }
       final isFirst = await isFirstTimeUser(sessionUser.id);
-      final fullName = sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
+      final fullName =
+          sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
           sessionUser.userMetadata?[SupabaseKeys.name] as String? ??
           '';
-      final profilePic = sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
+      final profilePic =
+          sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
           sessionUser.userMetadata?[SupabaseKeys.picture] as String?;
       final model = AuthUserModel(
         id: sessionUser.id,
         email: sessionUser.email ?? '',
         emailConfirmedAt: sessionUser.emailConfirmedAt,
         fullName: fullName,
+        username: '',
         locale: AppConstants.defaultLocale,
         createdAt: sessionUser.createdAt,
         profilePicture: profilePic,
       );
-      return Success(AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst));
+      return Success(
+        AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst),
+      );
     } on supabase.AuthException catch (e) {
       return Failure(FailureMapper.fromObject(e));
     } on Object catch (e) {
@@ -179,21 +241,26 @@ final class AuthRepositoryImpl implements AuthRepository {
         return const Failure(AuthFailure());
       }
       final isFirst = await isFirstTimeUser(sessionUser.id);
-      final fullName = sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
+      final fullName =
+          sessionUser.userMetadata?[SupabaseKeys.fullName] as String? ??
           sessionUser.userMetadata?[SupabaseKeys.name] as String? ??
           '';
-      final profilePic = sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
+      final profilePic =
+          sessionUser.userMetadata?[SupabaseKeys.avatarUrl] as String? ??
           sessionUser.userMetadata?[SupabaseKeys.picture] as String?;
       final model = AuthUserModel(
         id: sessionUser.id,
         email: sessionUser.email ?? '',
         emailConfirmedAt: sessionUser.emailConfirmedAt,
         fullName: fullName,
+        username: '',
         locale: AppConstants.defaultLocale,
         createdAt: sessionUser.createdAt,
         profilePicture: profilePic,
       );
-      return Success(AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst));
+      return Success(
+        AuthUserMapper.toEntity(model).copyWith(isFirstTimeUser: isFirst),
+      );
     } on supabase.AuthException catch (e) {
       return Failure(FailureMapper.fromObject(e));
     } on Object catch (e) {
@@ -224,9 +291,7 @@ final class AuthRepositoryImpl implements AuthRepository {
       return const Success(null);
     } on supabase.AuthException catch (e) {
       return Failure(
-        e.message.contains('expired')
-            ? const OtpExpired()
-            : const InvalidOtp(),
+        e.message.contains('expired') ? const OtpExpired() : const InvalidOtp(),
       );
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
@@ -234,32 +299,17 @@ final class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<ApiResult<void>> sendPhoneOtp(PhoneParams params) async {
+  Future<ApiResult<bool>> checkUsernameAvailability(
+    UsernameCheckParams params,
+  ) async {
     try {
-      await _client.auth.signInWithOtp(phone: params.phone);
-      return const Success(null);
-    } on supabase.AuthException {
-      return const Failure(AuthFailure());
-    } on Object catch (e) {
-      return Failure(FailureMapper.fromObject(e));
-    }
-  }
-
-  @override
-  Future<ApiResult<void>> verifyPhoneOtp(OtpVerifyParams params) async {
-    try {
-      await _client.auth.verifyOTP(
-        type: supabase.OtpType.sms,
-        token: params.token,
-        phone: params.target,
-      );
-      return const Success(null);
-    } on supabase.AuthException catch (e) {
-      return Failure(
-        e.message.contains('expired')
-            ? const OtpExpired()
-            : const InvalidOtp(),
-      );
+      final result = await _client
+          .from(SupabaseKeys.users)
+          .select(SupabaseKeys.id)
+          .eq(SupabaseKeys.username, params.username)
+          .limit(1);
+      final exists = (result as List).isNotEmpty;
+      return Success(!exists);
     } on Object catch (e) {
       return Failure(FailureMapper.fromObject(e));
     }

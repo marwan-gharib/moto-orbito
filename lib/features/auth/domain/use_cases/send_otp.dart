@@ -1,17 +1,16 @@
 import 'package:moto_orbito/core/error/api_result.dart';
+import 'package:moto_orbito/core/utils/use_case.dart';
 
 import '../repositories/auth_repository.dart';
+import '../repositories/params/params.dart';
 
-class SendOtp {
+class SendOtp implements UseCase<void, EmailParams> {
   SendOtp(this._repository);
 
   final AuthRepository _repository;
 
-  Future<ApiResult<void>> email(EmailParams params) {
+  @override
+  Future<ApiResult<void>> call(EmailParams params) {
     return _repository.sendEmailOtp(params);
-  }
-
-  Future<ApiResult<void>> phone(PhoneParams params) {
-    return _repository.sendPhoneOtp(params);
   }
 }
